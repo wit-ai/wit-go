@@ -20,10 +20,9 @@ import (
 )
 
 func main() {
-	// WIT_AI_TOKEN is a Server Access Token
 	client := witai.NewClient(os.Getenv("WIT_AI_TOKEN"))
 
-	// /messages?q=hello
+	// https://wit.ai/docs/http/20170307#get__message_link
 	msg, _ := client.Parse(&witai.MessageRequest{
 		Query: "hello",
 	})

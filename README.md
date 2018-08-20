@@ -10,6 +10,8 @@ go get -u github.com/plutov/wit.ai
 
 ## Usage
 
+### Parse text
+
 ```go
 package main
 
@@ -25,6 +27,31 @@ func main() {
 	// https://wit.ai/docs/http/20170307#get__message_link
 	msg, _ := client.Parse(&witai.MessageRequest{
 		Query: "hello",
+	})
+	fmt.Printf("%v", msg)
+}
+```
+
+### Send an audio file
+
+```go
+package main
+
+import (
+	"os"
+
+	witai "github.com/plutov/wit.ai"
+)
+
+func main() {
+	client := witai.NewClient(os.Getenv("WIT_AI_TOKEN"))
+
+	https://wit.ai/docs/http/20170307#post__speech_link
+	msg, _ := client.Speech(&witai.MessageRequest{
+		Speech: &witai.Speech{
+			File:        file,
+			ContentType: "audio/raw;encoding=unsigned-integer;bits=16;rate=16k;endian=little",
+		},
 	})
 	fmt.Printf("%v", msg)
 }

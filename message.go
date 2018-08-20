@@ -2,7 +2,9 @@ package witai
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 )
@@ -16,10 +18,18 @@ type MessageResponse struct {
 
 // MessageRequest - https://wit.ai/docs/http/20170307#get__message_link
 type MessageRequest struct {
-	Query    string `json:"q"`
-	MsgID    string `json:"msg_id"`
-	N        int    `json:"n"`
-	ThreadID string `json:"thread_id"`
+	Query    string          `json:"q"`
+	MsgID    string          `json:"msg_id"`
+	N        int             `json:"n"`
+	ThreadID string          `json:"thread_id"`
+	Context  *MessageContext `json:"context"`
+	Speech   *Speech         `json:"-"`
+}
+
+// Speech - https://wit.ai/docs/http/20170307#post__speech_link
+type Speech struct {
+	File        io.Reader `json:"file"`
+	ContentType string    `json:"content_type"` // Example: audio/raw;encoding=unsigned-integer;bits=16;rate=8000;endian=big
 }
 
 // MessageContext - https://wit.ai/docs/http/20170307#context_link
@@ -38,18 +48,13 @@ type MessageCoords struct {
 
 // Parse - parses text and returns entities
 func (c *Client) Parse(req *MessageRequest) (*MessageResponse, error) {
-	q := fmt.Sprintf("?q=%s", url.QueryEscape(req.Query))
-	if len(req.MsgID) != 0 {
-		q += fmt.Sprintf("&msg_id=%s", req.MsgID)
-	}
-	if req.N != 0 {
-		q += fmt.Sprintf("&n=%d", req.N)
-	}
-	if len(req.ThreadID) != 0 {
-		q += fmt.Sprintf("&thread_id=%s", req.ThreadID)
+	if req == nil {
+		return nil, errors.New("invalid request")
 	}
 
-	resp, err := c.request(http.MethodGet, "/message"+q, nil)
+	q := buildParseQuery(req)
+
+	resp, err := c.request(http.MethodGet, "/message"+q, "application/json", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -64,4 +69,44 @@ func (c *Client) Parse(req *MessageRequest) (*MessageResponse, error) {
 	}
 
 	return msgResp, nil
+}
+
+// Speech - sends audio file for parsing
+func (c *Client) Speech(req *MessageRequest) (*MessageResponse, error) {
+	if req == nil || req.Speech == nil {
+		return nil, errors.New("invalid request")
+	}
+
+	q := buildParseQuery(req)
+
+	resp, err := c.request(http.MethodPost, "/speech"+q, req.Speech.ContentType, req.Speech.File)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Close()
+
+	var msgResp *MessageResponse
+	decoder := json.NewDecoder(resp)
+	err = decoder.Decode(&msgResp)
+	if err != nil {
+		return nil, err
+	}
+
+	return msgResp, nil
+}
+
+func buildParseQuery(req *MessageRequest) string {
+	q := fmt.Sprintf("?q=%s", url.QueryEscape(req.Query))
+	if len(req.MsgID) != 0 {
+		q += fmt.Sprintf("&msg_id=%s", req.MsgID)
+	}
+	if req.N != 0 {
+		q += fmt.Sprintf("&n=%d", req.N)
+	}
+	if len(req.ThreadID) != 0 {
+		q += fmt.Sprintf("&thread_id=%s", req.ThreadID)
+	}
+
+	return q
 }

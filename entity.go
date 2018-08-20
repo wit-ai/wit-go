@@ -7,7 +7,7 @@ import (
 
 // GetEntities - returns list of entities. https://wit.ai/docs/http/20170307#get__entities_link
 func (c *Client) GetEntities() ([]string, error) {
-	resp, err := c.request(http.MethodGet, "/entities", nil)
+	resp, err := c.request(http.MethodGet, "/entities", "application/json", nil)
 	if err != nil {
 		return []string{}, err
 	}

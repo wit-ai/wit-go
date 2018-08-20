@@ -1,8 +1,6 @@
 package witai
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -42,20 +40,15 @@ func NewClientWithVersion(token, version string) *Client {
 	}
 }
 
-func (c *Client) request(method, url string, body interface{}) (io.ReadCloser, error) {
-	data, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(method, apiBase+url, bytes.NewBuffer(data))
+func (c *Client) request(method, url string, ct string, body io.Reader) (io.ReadCloser, error) {
+	req, err := http.NewRequest(method, apiBase+url, body)
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Authorization", c.headerAuth)
 	req.Header.Set("Accept", c.headerAccept)
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Content-Type", ct)
 
 	client := &http.Client{
 		Timeout: time.Second * 10,

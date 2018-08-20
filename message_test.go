@@ -20,6 +20,6 @@ func TestParse(t *testing.T) {
 	})
 
 	if msg == nil || msg.ID != "msg1" || len(msg.Entities) != 1 {
-		t.Fatalf("msg is not parsed correctly")
+		t.Fatalf("expected message id: msg1 and 1 entity, got %v", msg)
 	}
 }

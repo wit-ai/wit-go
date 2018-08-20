@@ -1,9 +1,20 @@
 package witai
 
-import "fmt"
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"time"
+)
 
-// DefaultVersion - https://wit.ai/docs/http/20170307
-const DefaultVersion = "20170307"
+const (
+	// DefaultVersion - https://wit.ai/docs/http/20170307
+	DefaultVersion = "20170307"
+)
+
+var apiBase = "https://api.wit.ai"
 
 // Client - Wit.ai client type
 type Client struct {
@@ -29,4 +40,30 @@ func NewClientWithVersion(token, version string) *Client {
 		headerAuth:   headerAuth,
 		headerAccept: headerAccept,
 	}
+}
+
+func (c *Client) request(method, url string, body interface{}) (io.ReadCloser, error) {
+	data, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(method, apiBase+url, bytes.NewBuffer(data))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Authorization", c.headerAuth)
+	req.Header.Set("Accept", c.headerAccept)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{
+		Timeout: time.Second * 10,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.Body, nil
 }

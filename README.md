@@ -42,3 +42,12 @@ msg, _ := client.Speech(&witai.MessageRequest{
 	},
 })
 ```
+
+### Create entity
+
+```go
+client.CreateEntity(witai.NewEntity{
+	ID:  "favorite_city",
+	Doc: "A city that I like",
+})
+```

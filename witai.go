@@ -1,6 +1,8 @@
 package witai
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -20,6 +22,10 @@ type Client struct {
 	Version      string
 	headerAuth   string
 	headerAccept string
+}
+
+type errorResp struct {
+	Body string `json:"body"`
 }
 
 // NewClient - returns Wit.ai client for default API version
@@ -56,6 +62,19 @@ func (c *Client) request(method, url string, ct string, body io.Reader) (io.Read
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode >= http.StatusBadRequest {
+		defer resp.Body.Close()
+
+		var e *errorResp
+		decoder := json.NewDecoder(resp.Body)
+		err = decoder.Decode(&e)
+		if err != nil {
+			return nil, errors.New("Internal Error")
+		}
+
+		return nil, errors.New(e.Body)
 	}
 
 	return resp.Body, nil

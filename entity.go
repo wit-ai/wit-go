@@ -15,11 +15,19 @@ type NewEntity struct {
 
 // Entity - https://wit.ai/docs/http/20170307#post__entities_link
 type Entity struct {
-	ID      string `json:"id"`
-	Doc     string `json:"doc"`
-	Name    string `json:"name"`
-	Lang    string `json:"lang"`
-	BuiltIn bool   `json:"builtin"`
+	ID      string   `json:"id"`
+	Doc     string   `json:"doc"`
+	Name    string   `json:"name"`
+	Lang    string   `json:"lang"`
+	Builtin bool     `json:"builtin"`
+	Lookups []string `json:"lookups"`
+	Values  []Value  `json:"values"`
+}
+
+// Value - https://wit.ai/docs/http/20170307#get__entities__entity_id_link
+type Value struct {
+	Value       string   `json:"value"`
+	Expressions []string `json:"expressions"`
 }
 
 // GetEntities - returns list of entities. https://wit.ai/docs/http/20170307#get__entities_link

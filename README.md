@@ -57,7 +57,9 @@ client.CreateEntity(witai.NewEntity{
 client.GetEntity("favorite_city")
 ```
 
-## Unit tests
+## Testing
+
+### Unit tests
 
 ```
 go test -race -v ./...

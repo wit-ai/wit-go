@@ -70,3 +70,21 @@ func TestDeleteEntity(t *testing.T) {
 		t.Fatalf("expected nil error, got: %v", err)
 	}
 }
+
+func TestUpdateEntity(t *testing.T) {
+	testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		res.Write([]byte(`{"doc": "new doc"}`))
+	}))
+	defer func() { testServer.Close() }()
+
+	c := NewClient(unitTestToken)
+	c.APIBase = testServer.URL
+
+	err := c.UpdateEntity("favorite_city", UpdateEntityFields{
+		Doc: "new doc",
+	})
+
+	if err != nil {
+		t.Fatalf("err=nil expected, got: %v", err)
+	}
+}

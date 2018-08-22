@@ -57,12 +57,26 @@ client.CreateEntity(witai.NewEntity{
 client.GetEntity("favorite_city")
 ```
 
+### Update entity
+
+```go
+client.UpdateEntity("favorite_city", witai.UpdateEntityFields{
+	Doc: "My favorite city",
+})
+```
+
+### Delete entity
+
+```go
+client.DeleteEntity("favorite_city")
+```
+
 ## Testing
 
 ### Unit tests
 
 ```
-go test -race -v ./...
+go test -race -v
 ```
 
 ### Integration tests

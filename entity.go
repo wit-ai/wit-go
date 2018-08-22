@@ -13,6 +13,13 @@ type NewEntity struct {
 	Doc string `json:"doc"`
 }
 
+// UpdateEntityFields - https://wit.ai/docs/http/20170307#put__entities__entity_id_link
+type UpdateEntityFields struct {
+	Doc     string   `json:"doc"`
+	Lookups []string `json:"lookups"`
+	Values  []Value  `json:"values"`
+}
+
 // Entity - https://wit.ai/docs/http/20170307#post__entities_link
 type Entity struct {
 	ID      string   `json:"id"`
@@ -46,8 +53,8 @@ func (c *Client) GetEntities() ([]string, error) {
 }
 
 // CreateEntity - Creates a new entity with the given attributes. https://wit.ai/docs/http/20170307#post__entities_link
-func (c *Client) CreateEntity(e NewEntity) (*Entity, error) {
-	entityJSON, err := json.Marshal(e)
+func (c *Client) CreateEntity(entity NewEntity) (*Entity, error) {
+	entityJSON, err := json.Marshal(entity)
 	if err != nil {
 		return nil, err
 	}
@@ -59,13 +66,13 @@ func (c *Client) CreateEntity(e NewEntity) (*Entity, error) {
 
 	defer resp.Close()
 
-	var entity *Entity
+	var entityResp *Entity
 	decoder := json.NewDecoder(resp)
-	if err = decoder.Decode(&entity); err != nil {
+	if err = decoder.Decode(&entityResp); err != nil {
 		return nil, err
 	}
 
-	return entity, nil
+	return entityResp, nil
 }
 
 // GetEntity - returns entity by ID. https://wit.ai/docs/http/20170307#get__entities__entity_id_link
@@ -96,4 +103,22 @@ func (c *Client) DeleteEntity(id string) error {
 	defer resp.Close()
 
 	return nil
+}
+
+// UpdateEntity - Updates an entity. https://wit.ai/docs/http/20170307#put__entities__entity_id_link
+func (c *Client) UpdateEntity(id string, entity UpdateEntityFields) error {
+	entityJSON, err := json.Marshal(entity)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.request(http.MethodPut, "/entities/"+id, "application/json", bytes.NewBuffer(entityJSON))
+	if err != nil {
+		return err
+	}
+
+	defer resp.Close()
+
+	decoder := json.NewDecoder(resp)
+	return decoder.Decode(&entity)
 }

@@ -12,6 +12,9 @@ var (
 		ID:  "integration_entity_id",
 		Doc: "integration_entity_doc",
 	}
+	integrationEntityUpdateFields = UpdateEntityFields{
+		Doc: "integration_entity_doc_updated",
+	}
 )
 
 func TestIntegrationInvalidToken(t *testing.T) {
@@ -28,13 +31,36 @@ func TestIntegrationEntities(t *testing.T) {
 	c.DeleteEntity(integrationEntity.ID)
 
 	entity, err := c.CreateEntity(integrationEntity)
-	if err != nil || entity == nil || entity.Lang != "en" {
-		t.Fatalf("expected nil error and lang=en, got: %v, err=%v", entity, err)
+	if err != nil {
+		t.Fatalf("expected nil error got: %v", err)
+	}
+	if entity == nil {
+		t.Fatalf("expected non nil entity")
+	}
+	if entity.Lang != "en" {
+		t.Fatalf("expected lang=en, got: %s", entity.Lang)
+	}
+
+	err = c.UpdateEntity(integrationEntity.ID, integrationEntityUpdateFields)
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+
+	e, err := c.GetEntity(integrationEntity.ID)
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+
+	if e.Doc != integrationEntityUpdateFields.Doc {
+		t.Fatalf("expected doc=%s, got %s", integrationEntityUpdateFields.Doc, e.Doc)
 	}
 
 	entities, err := c.GetEntities()
-	if err != nil || len(entities) == 0 {
-		t.Fatalf("expected >0 entities, got %v, err=%v", entities, err)
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if len(entities) == 0 {
+		t.Fatalf("expected >0 entities, got %v", entities)
 	}
 
 	err = c.DeleteEntity(integrationEntity.ID)

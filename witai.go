@@ -14,10 +14,9 @@ const (
 	DefaultVersion = "20170307"
 )
 
-var apiBase = "https://api.wit.ai"
-
 // Client - Wit.ai client type
 type Client struct {
+	APIBase      string
 	Token        string
 	Version      string
 	headerAuth   string
@@ -25,7 +24,8 @@ type Client struct {
 }
 
 type errorResp struct {
-	Body string `json:"body"`
+	Body  string `json:"body"`
+	Error string `json:"error"`
 }
 
 // NewClient - returns Wit.ai client for default API version
@@ -39,6 +39,7 @@ func NewClientWithVersion(token, version string) *Client {
 	headerAccept := fmt.Sprintf("application/vnd.wit.%s+json", version)
 
 	return &Client{
+		APIBase:      "https://api.wit.ai",
 		Token:        token,
 		Version:      version,
 		headerAuth:   headerAuth,
@@ -47,7 +48,7 @@ func NewClientWithVersion(token, version string) *Client {
 }
 
 func (c *Client) request(method, url string, ct string, body io.Reader) (io.ReadCloser, error) {
-	req, err := http.NewRequest(method, apiBase+url, body)
+	req, err := http.NewRequest(method, c.APIBase+url, body)
 	if err != nil {
 		return nil, err
 	}
@@ -72,6 +73,11 @@ func (c *Client) request(method, url string, ct string, body io.Reader) (io.Read
 		err = decoder.Decode(&e)
 		if err != nil {
 			return nil, errors.New("Internal Error")
+		}
+
+		// Wit.ai errors sometimes have "error", sometimes "body" message
+		if len(e.Error) > 0 {
+			return nil, errors.New(e.Error)
 		}
 
 		return nil, errors.New(e.Body)

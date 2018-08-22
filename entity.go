@@ -3,6 +3,7 @@ package witai
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -52,10 +53,39 @@ func (c *Client) CreateEntity(e NewEntity) (*Entity, error) {
 
 	var entity *Entity
 	decoder := json.NewDecoder(resp)
-	err = decoder.Decode(&entity)
-	if err != nil {
+	if err = decoder.Decode(&entity); err != nil {
 		return nil, err
 	}
 
 	return entity, nil
+}
+
+// GetEntity - returns entity by ID. https://wit.ai/docs/http/20170307#get__entities__entity_id_link
+func (c *Client) GetEntity(id string) (*Entity, error) {
+	resp, err := c.request(http.MethodGet, fmt.Sprintf("/entities/%s", id), "application/json", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Close()
+
+	var entity *Entity
+	decoder := json.NewDecoder(resp)
+	if err = decoder.Decode(&entity); err != nil {
+		return nil, err
+	}
+
+	return entity, nil
+}
+
+// DeleteEntity - deletes entity by ID. https://wit.ai/docs/http/20170307#delete__entities__entity_id_link
+func (c *Client) DeleteEntity(id string) error {
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s", id), "application/json", nil)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Close()
+
+	return nil
 }

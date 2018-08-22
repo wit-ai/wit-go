@@ -13,9 +13,8 @@ func TestParse(t *testing.T) {
 	}))
 	defer func() { testServer.Close() }()
 
-	apiBase = testServer.URL
-
 	c := NewClient("token")
+	c.APIBase = testServer.URL
 	msg, _ := c.Parse(&MessageRequest{
 		Query: "hello",
 	})
@@ -31,9 +30,8 @@ func TestSpeech(t *testing.T) {
 	}))
 	defer func() { testServer.Close() }()
 
-	apiBase = testServer.URL
-
 	c := NewClient("token")
+	c.APIBase = testServer.URL
 	msg, _ := c.Speech(&MessageRequest{
 		Speech: &Speech{
 			File:        bytes.NewReader([]byte{}),

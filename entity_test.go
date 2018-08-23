@@ -71,6 +71,21 @@ func TestDeleteEntity(t *testing.T) {
 	}
 }
 
+func TestDeleteEntityRole(t *testing.T) {
+	testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		res.Write([]byte(`{}`))
+	}))
+	defer func() { testServer.Close() }()
+
+	c := NewClient(unitTestToken)
+	c.APIBase = testServer.URL
+	err := c.DeleteEntityRole("favorite_city", "role")
+
+	if err != nil {
+		t.Fatalf("expected nil error, got: %v", err)
+	}
+}
+
 func TestUpdateEntity(t *testing.T) {
 	testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		res.Write([]byte(`{"doc": "new doc"}`))

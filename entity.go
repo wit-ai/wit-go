@@ -105,6 +105,18 @@ func (c *Client) DeleteEntity(id string) error {
 	return nil
 }
 
+// DeleteEntityRole - deletes entity role. https://wit.ai/docs/http/20170307#delete__entities__entity_id_role_id_link
+func (c *Client) DeleteEntityRole(entityID string, role string) error {
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s:%s", entityID, role), "application/json", nil)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Close()
+
+	return nil
+}
+
 // UpdateEntity - Updates an entity. https://wit.ai/docs/http/20170307#put__entities__entity_id_link
 func (c *Client) UpdateEntity(id string, entity UpdateEntityFields) error {
 	entityJSON, err := json.Marshal(entity)

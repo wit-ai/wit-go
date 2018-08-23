@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 )
 
 // NewEntity - https://wit.ai/docs/http/20170307#post__entities_link
@@ -15,26 +16,27 @@ type NewEntity struct {
 
 // UpdateEntityFields - https://wit.ai/docs/http/20170307#put__entities__entity_id_link
 type UpdateEntityFields struct {
-	Doc     string   `json:"doc"`
-	Lookups []string `json:"lookups"`
-	Values  []Value  `json:"values"`
+	Doc     string        `json:"doc"`
+	Lookups []string      `json:"lookups"`
+	Values  []EntityValue `json:"values"`
 }
 
 // Entity - https://wit.ai/docs/http/20170307#post__entities_link
 type Entity struct {
-	ID      string   `json:"id"`
-	Doc     string   `json:"doc"`
-	Name    string   `json:"name"`
-	Lang    string   `json:"lang"`
-	Builtin bool     `json:"builtin"`
-	Lookups []string `json:"lookups"`
-	Values  []Value  `json:"values"`
+	ID      string        `json:"id"`
+	Doc     string        `json:"doc"`
+	Name    string        `json:"name"`
+	Lang    string        `json:"lang"`
+	Builtin bool          `json:"builtin"`
+	Lookups []string      `json:"lookups"`
+	Values  []EntityValue `json:"values"`
 }
 
-// Value - https://wit.ai/docs/http/20170307#get__entities__entity_id_link
-type Value struct {
+// EntityValue - https://wit.ai/docs/http/20170307#get__entities__entity_id_link
+type EntityValue struct {
 	Value       string   `json:"value"`
 	Expressions []string `json:"expressions"`
+	MetaData    string   `json:"metadata"`
 }
 
 // GetEntities - returns list of entities. https://wit.ai/docs/http/20170307#get__entities_link
@@ -77,7 +79,7 @@ func (c *Client) CreateEntity(entity NewEntity) (*Entity, error) {
 
 // GetEntity - returns entity by ID. https://wit.ai/docs/http/20170307#get__entities__entity_id_link
 func (c *Client) GetEntity(id string) (*Entity, error) {
-	resp, err := c.request(http.MethodGet, fmt.Sprintf("/entities/%s", id), "application/json", nil)
+	resp, err := c.request(http.MethodGet, fmt.Sprintf("/entities/%s", url.QueryEscape(id)), "application/json", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -95,26 +97,22 @@ func (c *Client) GetEntity(id string) (*Entity, error) {
 
 // DeleteEntity - deletes entity by ID. https://wit.ai/docs/http/20170307#delete__entities__entity_id_link
 func (c *Client) DeleteEntity(id string) error {
-	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s", id), "application/json", nil)
-	if err != nil {
-		return err
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s", url.QueryEscape(id)), "application/json", nil)
+	if err == nil {
+		resp.Close()
 	}
 
-	defer resp.Close()
-
-	return nil
+	return err
 }
 
 // DeleteEntityRole - deletes entity role. https://wit.ai/docs/http/20170307#delete__entities__entity_id_role_id_link
 func (c *Client) DeleteEntityRole(entityID string, role string) error {
-	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s:%s", entityID, role), "application/json", nil)
-	if err != nil {
-		return err
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s:%s", url.QueryEscape(entityID), url.QueryEscape(role)), "application/json", nil)
+	if err == nil {
+		resp.Close()
 	}
 
-	defer resp.Close()
-
-	return nil
+	return err
 }
 
 // UpdateEntity - Updates an entity. https://wit.ai/docs/http/20170307#put__entities__entity_id_link
@@ -124,7 +122,7 @@ func (c *Client) UpdateEntity(id string, entity UpdateEntityFields) error {
 		return err
 	}
 
-	resp, err := c.request(http.MethodPut, "/entities/"+id, "application/json", bytes.NewBuffer(entityJSON))
+	resp, err := c.request(http.MethodPut, fmt.Sprintf("/entities/%s", url.QueryEscape(id)), "application/json", bytes.NewBuffer(entityJSON))
 	if err != nil {
 		return err
 	}
@@ -133,4 +131,37 @@ func (c *Client) UpdateEntity(id string, entity UpdateEntityFields) error {
 
 	decoder := json.NewDecoder(resp)
 	return decoder.Decode(&entity)
+}
+
+// AddEntityValue - Add a possible value into the list of values for the keyword entity. https://wit.ai/docs/http/20170307#post__entities__entity_id_values_link
+func (c *Client) AddEntityValue(entityID string, value EntityValue) (*Entity, error) {
+	valueJSON, err := json.Marshal(value)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.request(http.MethodPost, fmt.Sprintf("/entities/%s/values", url.QueryEscape(entityID)), "application/json", bytes.NewBuffer(valueJSON))
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Close()
+
+	var entityResp *Entity
+	decoder := json.NewDecoder(resp)
+	if err = decoder.Decode(&entityResp); err != nil {
+		return nil, err
+	}
+
+	return entityResp, nil
+}
+
+// DeleteEntityValue - Delete a canonical value from the entity. https://wit.ai/docs/http/20170307#delete__entities__entity_id_values_link
+func (c *Client) DeleteEntityValue(entityID string, value string) error {
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s/values/%s", url.QueryEscape(entityID), url.QueryEscape(value)), "application/json", nil)
+	if err == nil {
+		resp.Close()
+	}
+
+	return err
 }

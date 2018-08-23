@@ -71,6 +71,21 @@ client.UpdateEntity("favorite_city", witai.UpdateEntityFields{
 client.DeleteEntity("favorite_city")
 ```
 
+### Add entity value
+
+```go
+client.AddEntityValue("favorite_city", witai.EntityValue{
+	Value: "HCMC",
+	Expressions: ["Ho Chi Minh", "HCMC"],
+})
+```
+
+### Delete entity value
+
+```go
+client.DeleteEntityValue("favorite_city", "HCMC")
+```
+
 ## Testing
 
 ### Unit tests
@@ -84,5 +99,6 @@ go test -race -v
 Integration tests are connecting to real Wit.ai API, so you need to provide a valid token:
 
 ```
-WITAI_INTEGRATION_TOKEN=your_secret_token_here go test -v -tags=integration
+export WITAI_INTEGRATION_TOKEN=your_secret_token_here
+go test -v -tags=integration
 ```

@@ -35,8 +35,10 @@ func TestCreateEntity(t *testing.T) {
 		ID:  "favorite_city",
 		Doc: "A city that I like",
 	})
-
-	if err != nil || e.Lang != "en" {
+	if err != nil {
+		t.Fatalf("nil error expected, got %v", err)
+	}
+	if e.Lang != "en" {
 		t.Fatalf("lang=en expected, got: %s", e.Lang)
 	}
 }
@@ -49,9 +51,11 @@ func TestGetEntity(t *testing.T) {
 
 	c := NewClient(unitTestToken)
 	c.APIBase = testServer.URL
-	entity, _ := c.GetEntity("favorite_city")
-
-	if entity == nil || entity.Doc != "My favorite city" {
+	entity, err := c.GetEntity("favorite_city")
+	if err != nil {
+		t.Fatalf("nil error expected, got %v", err)
+	}
+	if entity.Doc != "My favorite city" {
 		t.Fatalf("expected valid entity, got: %v", entity)
 	}
 }
@@ -64,9 +68,7 @@ func TestDeleteEntity(t *testing.T) {
 
 	c := NewClient(unitTestToken)
 	c.APIBase = testServer.URL
-	err := c.DeleteEntity("favorite_city")
-
-	if err != nil {
+	if err := c.DeleteEntity("favorite_city"); err != nil {
 		t.Fatalf("expected nil error, got: %v", err)
 	}
 }
@@ -79,9 +81,7 @@ func TestDeleteEntityRole(t *testing.T) {
 
 	c := NewClient(unitTestToken)
 	c.APIBase = testServer.URL
-	err := c.DeleteEntityRole("favorite_city", "role")
-
-	if err != nil {
+	if err := c.DeleteEntityRole("favorite_city", "role"); err != nil {
 		t.Fatalf("expected nil error, got: %v", err)
 	}
 }
@@ -95,11 +95,41 @@ func TestUpdateEntity(t *testing.T) {
 	c := NewClient(unitTestToken)
 	c.APIBase = testServer.URL
 
-	err := c.UpdateEntity("favorite_city", UpdateEntityFields{
+	if err := c.UpdateEntity("favorite_city", UpdateEntityFields{
 		Doc: "new doc",
-	})
-
-	if err != nil {
+	}); err != nil {
 		t.Fatalf("err=nil expected, got: %v", err)
+	}
+}
+
+func TestAddEntityValue(t *testing.T) {
+	testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		res.Write([]byte(`{"lang": "de"}`))
+	}))
+	defer func() { testServer.Close() }()
+
+	c := NewClient(unitTestToken)
+	c.APIBase = testServer.URL
+	e, err := c.AddEntityValue("favorite_city", EntityValue{
+		Value: "Minsk",
+	})
+	if err != nil {
+		t.Fatalf("nil error expected, got %v", err)
+	}
+	if e.Lang != "de" {
+		t.Fatalf("lang=de expected, got: %s", e.Lang)
+	}
+}
+
+func TestDeleteEntityValue(t *testing.T) {
+	testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		res.Write([]byte(`{}`))
+	}))
+	defer func() { testServer.Close() }()
+
+	c := NewClient(unitTestToken)
+	c.APIBase = testServer.URL
+	if err := c.DeleteEntityValue("favorite_city", "London"); err != nil {
+		t.Fatalf("expected nil error, got: %v", err)
 	}
 }

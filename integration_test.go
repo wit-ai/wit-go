@@ -30,6 +30,7 @@ func TestIntegrationEntities(t *testing.T) {
 	// just to make sure we don't create suplicates
 	c.DeleteEntity(integrationEntity.ID)
 
+	// create entity
 	entity, err := c.CreateEntity(integrationEntity)
 	if err != nil {
 		t.Fatalf("expected nil error got: %v", err)
@@ -41,6 +42,26 @@ func TestIntegrationEntities(t *testing.T) {
 		t.Fatalf("expected lang=en, got: %s", entity.Lang)
 	}
 
+	// add entity value 1
+	if _, err = c.AddEntityValue(integrationEntity.ID, EntityValue{
+		Value:       "London",
+		Expressions: []string{"London"},
+	}); err != nil {
+		t.Fatalf("expected non nil entity")
+	}
+	// add entity value 2
+	if _, err = c.AddEntityValue(integrationEntity.ID, EntityValue{
+		Value:       "HCMC",
+		Expressions: []string{"Ho Chi Minh", "HCMC"},
+	}); err != nil {
+		t.Fatalf("expected non nil entity")
+	}
+
+	// delete entity 1
+	if err = c.DeleteEntityValue(integrationEntity.ID, "HCMC"); err != nil {
+		t.Fatalf("expected non nil entity")
+	}
+
 	err = c.UpdateEntity(integrationEntity.ID, integrationEntityUpdateFields)
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
@@ -49,6 +70,10 @@ func TestIntegrationEntities(t *testing.T) {
 	e, err := c.GetEntity(integrationEntity.ID)
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
+	}
+
+	if len(e.Values) != 1 {
+		t.Fatalf("expected 1 value, got %v", e.Values)
 	}
 
 	if e.Doc != integrationEntityUpdateFields.Doc {

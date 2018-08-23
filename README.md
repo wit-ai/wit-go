@@ -78,7 +78,7 @@ client.DeleteEntity("favorite_city")
 ```go
 client.AddEntityValue("favorite_city", witai.EntityValue{
 	Value: "HCMC",
-	Expressions: ["Ho Chi Minh", "HCMC"],
+	Expressions: ["HoChiMinh", "HCMC"],
 })
 ```
 
@@ -86,6 +86,18 @@ client.AddEntityValue("favorite_city", witai.EntityValue{
 
 ```go
 client.DeleteEntityValue("favorite_city", "HCMC")
+```
+
+### Add value expression
+
+```go
+client.AddEntityValueExpression("favorite_city", "HCMC", "HoChiMinh")
+```
+
+### Delete value expression
+
+```go
+client.DeleteEntityValueExpression("favorite_city", "HCMC", "HoChiMinh")
 ```
 
 ## Testing

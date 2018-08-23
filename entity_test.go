@@ -133,3 +133,33 @@ func TestDeleteEntityValue(t *testing.T) {
 		t.Fatalf("expected nil error, got: %v", err)
 	}
 }
+
+func TestAddEntityValueExpression(t *testing.T) {
+	testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		res.Write([]byte(`{"lang": "de"}`))
+	}))
+	defer func() { testServer.Close() }()
+
+	c := NewClient(unitTestToken)
+	c.APIBase = testServer.URL
+	e, err := c.AddEntityValueExpression("favorite_city", "Minsk", "Minsk")
+	if err != nil {
+		t.Fatalf("nil error expected, got %v", err)
+	}
+	if e.Lang != "de" {
+		t.Fatalf("lang=de expected, got: %s", e.Lang)
+	}
+}
+
+func TestDeleteEntityValueExpression(t *testing.T) {
+	testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		res.Write([]byte(`{}`))
+	}))
+	defer func() { testServer.Close() }()
+
+	c := NewClient(unitTestToken)
+	c.APIBase = testServer.URL
+	if err := c.DeleteEntityValueExpression("favorite_city", "Minsk", "Minsk"); err != nil {
+		t.Fatalf("expected nil error, got: %v", err)
+	}
+}

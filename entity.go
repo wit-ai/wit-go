@@ -165,3 +165,42 @@ func (c *Client) DeleteEntityValue(entityID string, value string) error {
 
 	return err
 }
+
+// AddEntityValueExpression - Create a new expression of the canonical value of the keyword entity. https://wit.ai/docs/http/20170307#post__entities__entity_id_values__value_id_expressions_link
+func (c *Client) AddEntityValueExpression(entityID string, value string, expression string) (*Entity, error) {
+	type expr struct {
+		Expression string `json:"expression"`
+	}
+
+	exprJSON, err := json.Marshal(expr{
+		Expression: expression,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.request(http.MethodPost, fmt.Sprintf("/entities/%s/values/%s/expressions", url.QueryEscape(entityID), url.QueryEscape(value)), "application/json", bytes.NewBuffer(exprJSON))
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Close()
+
+	var entityResp *Entity
+	decoder := json.NewDecoder(resp)
+	if err = decoder.Decode(&entityResp); err != nil {
+		return nil, err
+	}
+
+	return entityResp, nil
+}
+
+// DeleteEntityValueExpression - Delete an expression of the canonical value of the entity. https://wit.ai/docs/http/20170307#delete__entities__entity_id_values__value_id_expressions_link
+func (c *Client) DeleteEntityValueExpression(entityID string, value string, expression string) error {
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s/values/%s/expressions/%s", url.QueryEscape(entityID), url.QueryEscape(value), url.QueryEscape(expression)), "application/json", nil)
+	if err == nil {
+		resp.Close()
+	}
+
+	return err
+}

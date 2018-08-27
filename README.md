@@ -110,6 +110,8 @@ client.GetApps(limit, offset)
 
 ## Testing
 
+Both Unit / Integration tests are executed by TravisCI.
+
 ### Unit tests
 
 ```

@@ -8,3 +8,4 @@ env:
 
 script:
   - go test -race -v
+  - go test -v -tags=integration

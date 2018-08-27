@@ -26,6 +26,43 @@ func TestIntegrationInvalidToken(t *testing.T) {
 	}
 }
 
+func TestIntegrationGetUnknownEntity(t *testing.T) {
+	c := getIntegrationClient()
+	_, err := c.GetEntity("unknown_id")
+	if err == nil {
+		t.Fatalf("expected error, got: nil")
+	}
+}
+
+func TestIntegrationDeleteUnknownEntity(t *testing.T) {
+	c := getIntegrationClient()
+	err := c.DeleteEntity("unknown_id")
+	if err == nil {
+		t.Fatalf("expected error, got: nil")
+	}
+}
+
+func TestIntegrationUnknownEntity(t *testing.T) {
+	c := getIntegrationClient()
+	_, err := c.GetEntity("unknown_id")
+	if err == nil {
+		t.Fatalf("expected error, got: nil")
+	}
+}
+
+func TestIntegrationGetApps(t *testing.T) {
+	c := getIntegrationClient()
+	_, err := c.GetApps(0, 0)
+	if err == nil {
+		t.Fatalf("expected error for limit=0, got: nil")
+	}
+
+	_, err = c.GetApps(1, 0)
+	if err != nil {
+		t.Fatalf("not expected error for limit=1, got %v", err)
+	}
+}
+
 func TestIntegrationFullFlow(t *testing.T) {
 	c := getIntegrationClient()
 	// just to make sure we don't create suplicates

@@ -12,6 +12,12 @@ var (
 		ID:  "integration_entity_id",
 		Doc: "integration_entity_doc",
 	}
+	integrationApp = App{
+		Name:        "integration_app_id",
+		Private:     false,
+		Description: "integration_app_desc",
+		Lang:        "en",
+	}
 	integrationEntityUpdateFields = UpdateEntityFields{
 		Lookups: []string{"keywords"},
 		Doc:     "integration_entity_doc_updated",
@@ -50,22 +56,57 @@ func TestIntegrationUnknownEntity(t *testing.T) {
 	}
 }
 
-func TestIntegrationGetApps(t *testing.T) {
+func TestIntegrationApps(t *testing.T) {
 	c := getIntegrationClient()
-	_, err := c.GetApps(0, 0)
-	if err == nil {
-		t.Fatalf("expected error for limit=0, got: nil")
+
+	// delete app
+	apps, err := c.GetApps(10, 0)
+	for _, a := range apps {
+		if a.Name == integrationApp.Name {
+			c.DeleteApp(a.ID)
+		}
 	}
 
-	_, err = c.GetApps(1, 0)
+	a := &App{
+		Name:        "integration_app_id",
+		Private:     false,
+		Description: "integration_app_desc",
+		Lang:        "en",
+	}
+
+	err = c.CreateApp(a)
 	if err != nil {
-		t.Fatalf("not expected error for limit=1, got %v", err)
+		t.Fatalf("not expected error, got %v", err)
+	}
+
+	appID := ""
+	apps, err = c.GetApps(10, 0)
+	if err != nil {
+		t.Fatalf("not expected error, got %v", err)
+	}
+	for _, a := range apps {
+		if a.Name == integrationApp.Name {
+			appID = a.ID
+		}
+	}
+
+	app, err := c.GetApp(appID)
+	if err != nil {
+		t.Fatalf("not expected error, got %v", err)
+	}
+	if app.Name != integrationApp.Name {
+		t.Fatalf("expected app name %s, got %s", integrationApp.Name, app.Name)
+	}
+
+	err = c.DeleteApp(appID)
+	if err != nil {
+		t.Fatalf("not expected error, got %v", err)
 	}
 }
 
 func TestIntegrationFullFlow(t *testing.T) {
 	c := getIntegrationClient()
-	// just to make sure we don't create suplicates
+	// just to make sure we don't create duplicates
 	c.DeleteEntity(integrationEntity.ID)
 
 	// create entity

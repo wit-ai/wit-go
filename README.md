@@ -100,13 +100,6 @@ client.AddEntityValueExpression("favorite_city", "HCMC", "HoChiMinh")
 client.DeleteEntityValueExpression("favorite_city", "HCMC", "HoChiMinh")
 ```
 
-### Get apps that you own
-
-```go
-limit := 10
-offset := 0
-client.GetApps(limit, offset)
-```
 
 ## Testing
 

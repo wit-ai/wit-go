@@ -67,38 +67,20 @@ func TestIntegrationApps(t *testing.T) {
 		}
 	}
 
-	a := &App{
-		Name:        "integration_app_id",
-		Private:     false,
-		Description: "integration_app_desc",
-		Lang:        "en",
-	}
-
-	err = c.CreateApp(a)
+	app, err := c.CreateApp(integrationApp)
 	if err != nil {
 		t.Fatalf("not expected error, got %v", err)
 	}
 
-	appID := ""
-	apps, err = c.GetApps(10, 0)
+	getApp, err := c.GetApp(app.AppID)
 	if err != nil {
 		t.Fatalf("not expected error, got %v", err)
 	}
-	for _, a := range apps {
-		if a.Name == integrationApp.Name {
-			appID = a.ID
-		}
+	if getApp.Name != integrationApp.Name {
+		t.Fatalf("expected app name %s, got %s", integrationApp.Name, getApp.Name)
 	}
 
-	app, err := c.GetApp(appID)
-	if err != nil {
-		t.Fatalf("not expected error, got %v", err)
-	}
-	if app.Name != integrationApp.Name {
-		t.Fatalf("expected app name %s, got %s", integrationApp.Name, app.Name)
-	}
-
-	err = c.DeleteApp(appID)
+	err = c.DeleteApp(app.AppID)
 	if err != nil {
 		t.Fatalf("not expected error, got %v", err)
 	}

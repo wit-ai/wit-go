@@ -47,10 +47,9 @@ func TestCreateApp(t *testing.T) {
 
 	c := NewClient(unitTestToken)
 	c.APIBase = testServer.URL
-	app := &App{
+	app, err := c.CreateApp(App{
 		Name: "app",
-	}
-	err := c.CreateApp(app)
+	})
 	if err != nil {
 		t.Fatalf("nil error expected, got %v", err)
 	}
@@ -74,21 +73,20 @@ func TestDeleteApp(t *testing.T) {
 
 func TestUpdateApp(t *testing.T) {
 	testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		res.Write([]byte(`{"lang": "en"}`))
+		res.Write([]byte(`{"description": "updated"}`))
 	}))
 	defer func() { testServer.Close() }()
 
 	c := NewClient(unitTestToken)
 	c.APIBase = testServer.URL
 
-	app := App{
+	app, err := c.UpdateApp("appid", App{
 		Description: "new desc",
-	}
-
-	if err := c.UpdateApp("appid", &app); err != nil {
+	})
+	if err != nil {
 		t.Fatalf("err=nil expected, got: %v", err)
 	}
-	if app.Lang != "en" {
-		t.Fatalf("lang=en expected, got: %s", app.Lang)
+	if app.Description != "updated" {
+		t.Fatalf("description=updated expected, got: %s", app.Lang)
 	}
 }

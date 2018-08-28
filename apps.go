@@ -11,12 +11,16 @@ import (
 // App - https://wit.ai/docs/http/20170307#get__apps_link
 type App struct {
 	Name        string `json:"name"`
-	Description string `json:"description"`
 	Lang        string `json:"lang"`
 	Private     bool   `json:"private"`
-	ID          string `json:"id,omitempty"`
-	CreatedAt   string `json:"created_at,omitempty"`
-	Timezone    string `json:"timezone,omitempty"`
+	Description string `json:"description,omitempty"`
+	// Wit.ai has both desc and description properties
+	Desc string `json:"desc,omitempty"`
+	ID   string `json:"id,omitempty"`
+	// Wit.ai has both id and app_id properties
+	AppID     string `json:"app_id,omitempty"`
+	CreatedAt string `json:"created_at,omitempty"`
+	Timezone  string `json:"timezone,omitempty"`
 }
 
 // GetApps - Returns an array of all apps that you own. https://wit.ai/docs/http/20170307#get__apps_link
@@ -70,37 +74,43 @@ func (c *Client) DeleteApp(id string) error {
 }
 
 // CreateApp - creates new app. https://wit.ai/docs/http/20170307#post__apps_link
-func (c *Client) CreateApp(app *App) error {
+func (c *Client) CreateApp(app App) (*App, error) {
 	appJSON, err := json.Marshal(app)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	resp, err := c.request(http.MethodPost, "/apps", "application/json", bytes.NewBuffer(appJSON))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer resp.Close()
 
+	var createdApp *App
 	decoder := json.NewDecoder(resp)
-	return decoder.Decode(&app)
+	err = decoder.Decode(&createdApp)
+
+	return createdApp, err
 }
 
 // UpdateApp - Updates an app. https://wit.ai/docs/http/20170307#put__apps__app_id_link
-func (c *Client) UpdateApp(id string, app *App) error {
+func (c *Client) UpdateApp(id string, app App) (*App, error) {
 	appJSON, err := json.Marshal(app)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	resp, err := c.request(http.MethodPut, fmt.Sprintf("/apps/%s", url.QueryEscape(id)), "application/json", bytes.NewBuffer(appJSON))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer resp.Close()
 
+	var updatedApp *App
 	decoder := json.NewDecoder(resp)
-	return decoder.Decode(&app)
+	err = decoder.Decode(&updatedApp)
+
+	return updatedApp, err
 }

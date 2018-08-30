@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	integrationEntity = NewEntity{
+	integrationEntity = Entity{
 		ID:  "integration_entity_id",
 		Doc: "integration_entity_doc",
 	}
@@ -18,7 +18,7 @@ var (
 		Description: "integration_app_desc",
 		Lang:        "en",
 	}
-	integrationEntityUpdateFields = UpdateEntityFields{
+	integrationEntityUpdateFields = Entity{
 		Lookups: []string{"keywords"},
 		Doc:     "integration_entity_doc_updated",
 	}

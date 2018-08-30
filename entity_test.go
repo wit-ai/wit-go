@@ -31,7 +31,7 @@ func TestCreateEntity(t *testing.T) {
 
 	c := NewClient(unitTestToken)
 	c.APIBase = testServer.URL
-	e, err := c.CreateEntity(NewEntity{
+	e, err := c.CreateEntity(Entity{
 		ID:  "favorite_city",
 		Doc: "A city that I like",
 	})
@@ -95,7 +95,7 @@ func TestUpdateEntity(t *testing.T) {
 	c := NewClient(unitTestToken)
 	c.APIBase = testServer.URL
 
-	if err := c.UpdateEntity("favorite_city", UpdateEntityFields{
+	if err := c.UpdateEntity("favorite_city", Entity{
 		Doc: "new doc",
 	}); err != nil {
 		t.Fatalf("err=nil expected, got: %v", err)

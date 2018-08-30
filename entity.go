@@ -8,28 +8,15 @@ import (
 	"net/url"
 )
 
-// NewEntity - https://wit.ai/docs/http/20170307#post__entities_link
-type NewEntity struct {
-	ID  string `json:"id"`
-	Doc string `json:"doc"`
-}
-
-// UpdateEntityFields - https://wit.ai/docs/http/20170307#put__entities__entity_id_link
-type UpdateEntityFields struct {
-	Doc     string        `json:"doc"`
-	Lookups []string      `json:"lookups"`
-	Values  []EntityValue `json:"values"`
-}
-
 // Entity - https://wit.ai/docs/http/20170307#post__entities_link
 type Entity struct {
 	ID      string        `json:"id"`
 	Doc     string        `json:"doc"`
-	Name    string        `json:"name"`
-	Lang    string        `json:"lang"`
-	Builtin bool          `json:"builtin"`
-	Lookups []string      `json:"lookups"`
-	Values  []EntityValue `json:"values"`
+	Name    string        `json:"name,omitempty"`
+	Lang    string        `json:"lang,omitempty"`
+	Builtin bool          `json:"builtin,omitempty"`
+	Lookups []string      `json:"lookups,omitempty"`
+	Values  []EntityValue `json:"values,omitempty"`
 }
 
 // EntityValue - https://wit.ai/docs/http/20170307#get__entities__entity_id_link
@@ -55,7 +42,7 @@ func (c *Client) GetEntities() ([]string, error) {
 }
 
 // CreateEntity - Creates a new entity with the given attributes. https://wit.ai/docs/http/20170307#post__entities_link
-func (c *Client) CreateEntity(entity NewEntity) (*Entity, error) {
+func (c *Client) CreateEntity(entity Entity) (*Entity, error) {
 	entityJSON, err := json.Marshal(entity)
 	if err != nil {
 		return nil, err
@@ -116,7 +103,7 @@ func (c *Client) DeleteEntityRole(entityID string, role string) error {
 }
 
 // UpdateEntity - Updates an entity. https://wit.ai/docs/http/20170307#put__entities__entity_id_link
-func (c *Client) UpdateEntity(id string, entity UpdateEntityFields) error {
+func (c *Client) UpdateEntity(id string, entity Entity) error {
 	entityJSON, err := json.Marshal(entity)
 	if err != nil {
 		return err

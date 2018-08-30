@@ -47,7 +47,7 @@ msg, _ := client.Speech(&witai.MessageRequest{
 ### Create entity
 
 ```go
-client.CreateEntity(witai.NewEntity{
+client.CreateEntity(witai.Entity{
 	ID:  "favorite_city",
 	Doc: "A city that I like",
 })
@@ -62,7 +62,7 @@ client.GetEntity("favorite_city")
 ### Update entity
 
 ```go
-client.UpdateEntity("favorite_city", witai.UpdateEntityFields{
+client.UpdateEntity("favorite_city", witai.Entity{
 	Doc: "My favorite city",
 })
 ```

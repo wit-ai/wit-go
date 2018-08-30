@@ -10,14 +10,16 @@ import (
 
 // App - https://wit.ai/docs/http/20170307#get__apps_link
 type App struct {
-	Name        string `json:"name"`
-	Lang        string `json:"lang"`
-	Private     bool   `json:"private"`
+	Name    string `json:"name"`
+	Lang    string `json:"lang"`
+	Private bool   `json:"private"`
+	// Description presents when we get an app
 	Description string `json:"description,omitempty"`
-	// Wit.ai has both desc and description properties
+	// Use Desc when create an app
 	Desc string `json:"desc,omitempty"`
-	ID   string `json:"id,omitempty"`
-	// Wit.ai has both id and app_id properties
+	// ID presents when we get an app
+	ID string `json:"id,omitempty"`
+	// AppID presents when we create an app
 	AppID     string `json:"app_id,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`
 	Timezone  string `json:"timezone,omitempty"`

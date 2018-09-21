@@ -5,6 +5,7 @@ package witai
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 var (
@@ -19,6 +20,7 @@ var (
 		Lang:        "en",
 	}
 	integrationEntityUpdateFields = Entity{
+		Name:    "integration_entity_id",
 		Lookups: []string{"keywords"},
 		Doc:     "integration_entity_doc_updated",
 	}
@@ -72,6 +74,9 @@ func TestIntegrationApps(t *testing.T) {
 		t.Fatalf("not expected error, got %v", err)
 	}
 
+	// create may take some time
+	time.Sleep(time.Second)
+
 	getApp, err := c.GetApp(app.AppID)
 	if err != nil {
 		t.Fatalf("not expected error, got %v", err)
@@ -86,7 +91,7 @@ func TestIntegrationApps(t *testing.T) {
 	}
 }
 
-func TestIntegrationFullFlow(t *testing.T) {
+func TestIntegrationEntities(t *testing.T) {
 	c := getIntegrationClient()
 	// just to make sure we don't create duplicates
 	c.DeleteEntity(integrationEntity.ID)
@@ -102,6 +107,9 @@ func TestIntegrationFullFlow(t *testing.T) {
 	if entity.Lang != "en" {
 		t.Fatalf("expected lang=en, got: %s", entity.Lang)
 	}
+
+	// create may take some time
+	time.Sleep(time.Second)
 
 	// update entity
 	err = c.UpdateEntity(integrationEntity.ID, integrationEntityUpdateFields)
@@ -134,7 +142,7 @@ func TestIntegrationFullFlow(t *testing.T) {
 		t.Fatalf("expected nil error, got %v", err)
 	}
 
-	// delete entity 1
+	// delete entity value 1
 	if err = c.DeleteEntityValue(integrationEntity.ID, "HCMC"); err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
@@ -164,6 +172,52 @@ func TestIntegrationFullFlow(t *testing.T) {
 	err = c.DeleteEntity(integrationEntity.ID)
 	if err != nil {
 		t.Fatalf("expected nil error got err=%v", err)
+	}
+}
+
+func TestIntegrationSamples(t *testing.T) {
+	c := getIntegrationClient()
+
+	// cleanup
+	c.DeleteSamples([]Sample{
+		Sample{
+			Text: "I live in London",
+		},
+	})
+
+	// Deletion takes time
+	time.Sleep(time.Second * 5)
+
+	// samples test
+	_, validateErr := c.ValidateSamples([]Sample{
+		Sample{
+			Text: "I live in London",
+		},
+	})
+	if validateErr != nil {
+		t.Fatalf("expected nil error, got %v", validateErr)
+	}
+
+	// Training takes time
+	time.Sleep(time.Second * 20)
+
+	// get samples
+	samples, samplesErr := c.GetSamples(1, 0)
+	if samplesErr != nil {
+		t.Fatalf("expected nil error, got %v", samplesErr)
+	}
+	if len(samples) != 1 {
+		t.Fatalf("expected 1 sample, got %v", samples)
+	}
+
+	// delete samples
+	_, delSamplesErr := c.DeleteSamples([]Sample{
+		Sample{
+			Text: "I live in London",
+		},
+	})
+	if delSamplesErr != nil {
+		t.Fatalf("expected nil error, got %v", delSamplesErr)
 	}
 }
 

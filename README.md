@@ -44,8 +44,9 @@ msg, _ := client.Speech(&witai.MessageRequest{
 })
 ```
 
-### Create entity
+### Entities
 
+Create:
 ```go
 client.CreateEntity(witai.Entity{
 	ID:  "favorite_city",
@@ -53,28 +54,26 @@ client.CreateEntity(witai.Entity{
 })
 ```
 
-### Get entity
-
+Get:
 ```go
 client.GetEntity("favorite_city")
 ```
 
-### Update entity
-
+Update:
 ```go
 client.UpdateEntity("favorite_city", witai.Entity{
 	Doc: "My favorite city",
 })
 ```
 
-### Delete entity
-
+Delete:
 ```go
 client.DeleteEntity("favorite_city")
 ```
 
-### Add entity value
+### Entity values
 
+Add:
 ```go
 client.AddEntityValue("favorite_city", witai.EntityValue{
 	Value: "HCMC",
@@ -82,24 +81,40 @@ client.AddEntityValue("favorite_city", witai.EntityValue{
 })
 ```
 
-### Delete entity value
-
+Delete:
 ```go
 client.DeleteEntityValue("favorite_city", "HCMC")
 ```
 
-### Add value expression
+### Value expressions
 
+Add:
 ```go
 client.AddEntityValueExpression("favorite_city", "HCMC", "HoChiMinh")
 ```
 
-### Delete value expression
-
+Delete:
 ```go
 client.DeleteEntityValueExpression("favorite_city", "HCMC", "HoChiMinh")
 ```
 
+### Training
+
+Validate samples (sentence + entities annotations) to train your app programmatically:
+```go
+client.ValidateSamples([]witai.Sample{
+	Sample{
+		Text: "I live in HCMC",
+	},
+})
+```
+
+Get validate samples:
+```go
+limit := 10
+offset := 0
+client.GetSamples(limit, offset)
+```
 
 ## Testing
 

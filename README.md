@@ -21,6 +21,7 @@ package main
 
 import (
 	"os"
+	"fmt"
 
 	witai "github.com/wit-ai/wit-go"
 )

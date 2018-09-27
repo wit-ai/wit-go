@@ -9,7 +9,7 @@ Go client for [wit.ai](https://wit.ai/) HTTP API.
 ## Install
 
 ```
-go get -u github.com/plutov/wit.ai
+go get -u github.com/wit-ai/wit-go
 ```
 
 ## Usage
@@ -22,7 +22,7 @@ package main
 import (
 	"os"
 
-	witai "github.com/plutov/wit.ai"
+	witai "github.com/wit-ai/wit-go"
 )
 
 func main() {

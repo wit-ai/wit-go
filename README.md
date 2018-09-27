@@ -1,6 +1,8 @@
 ![wit.ai](https://s3.amazonaws.com/pliutau.com/wit.png)
 
-[![Build Status](https://travis-ci.org/plutov/wit.ai.svg?branch=master)](https://travis-ci.org/plutov/wit.ai) [![GoDoc](https://godoc.org/github.com/plutov/wit.ai?status.svg)](https://godoc.org/github.com/plutov/wit.ai) [![Go Report Card](https://goreportcard.com/badge/github.com/plutov/wit.ai)](https://goreportcard.com/report/github.com/plutov/wit.ai)
+[![Build Status](https://travis-ci.org/wit-ai/wit-go.svg?branch=master)](https://travis-ci.org/wit-ai/wit-go) [![GoDoc](https://godoc.org/github.com/wit-ai/wit-go?status.svg)](https://godoc.org/github.com/wit-ai/wit-go) [![Go Report Card](https://goreportcard.com/badge/github.com/wit-ai/wit-go)](https://goreportcard.com/report/github.com/wit-ai/wit-go)
+
+*This repository is community-maintained. We gladly accept pull requests. Please see the [Wit HTTP Reference](https://wit.ai/docs/http/latest) for all supported endpoints.*
 
 Go client for [wit.ai](https://wit.ai/) HTTP API.
 

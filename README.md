@@ -137,3 +137,8 @@ Integration tests are connecting to real Wit.ai API, so you need to provide a va
 export WITAI_INTEGRATION_TOKEN=your_secret_token_here
 go test -v -tags=integration
 ```
+
+
+## License
+
+The license for wit-go can be found in LICENSE file in the root directory of this source tree.

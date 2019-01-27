@@ -28,6 +28,7 @@ import (
 
 func main() {
 	client := witai.NewClient(os.Getenv("WIT_AI_TOKEN"))
+	// Use client.SetHTTPClient() to set custom http.Client
 
 	msg, _ := client.Parse(&witai.MessageRequest{
 		Query: "hello",

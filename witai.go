@@ -23,6 +23,7 @@ type Client struct {
 	Version      string
 	headerAuth   string
 	headerAccept string
+	httpClient   *http.Client
 }
 
 type errorResp struct {
@@ -40,13 +41,23 @@ func NewClientWithVersion(token, version string) *Client {
 	headerAuth := fmt.Sprintf("Bearer %s", token)
 	headerAccept := fmt.Sprintf("application/vnd.wit.%s+json", version)
 
+	defaultClient := &http.Client{
+		Timeout: time.Second * 10,
+	}
+
 	return &Client{
 		APIBase:      "https://api.wit.ai",
 		Token:        token,
 		Version:      version,
 		headerAuth:   headerAuth,
 		headerAccept: headerAccept,
+		httpClient:   defaultClient,
 	}
+}
+
+// SetHTTPClient allows to use your custom http.Client
+func (c *Client) SetHTTPClient(httpClient *http.Client) {
+	c.httpClient = httpClient
 }
 
 func (c *Client) request(method, url string, ct string, body io.Reader) (io.ReadCloser, error) {
@@ -59,10 +70,7 @@ func (c *Client) request(method, url string, ct string, body io.Reader) (io.Read
 	req.Header.Set("Accept", c.headerAccept)
 	req.Header.Set("Content-Type", ct)
 
-	client := &http.Client{
-		Timeout: time.Second * 10,
-	}
-	resp, err := client.Do(req)
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

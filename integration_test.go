@@ -4,6 +4,7 @@
 package witai
 
 import (
+	"net/http"
 	"os"
 	"strings"
 	"testing"
@@ -234,5 +235,9 @@ func TestIntegrationExport(t *testing.T) {
 }
 
 func getIntegrationClient() *Client {
-	return NewClient(os.Getenv("WITAI_INTEGRATION_TOKEN"))
+	c := NewClient(os.Getenv("WITAI_INTEGRATION_TOKEN"))
+	c.SetHTTPClient(&http.Client{
+		Timeout: time.Second * 20,
+	})
+	return c
 }

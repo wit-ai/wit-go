@@ -5,6 +5,7 @@ package witai
 
 import (
 	"os"
+	"strings"
 	"testing"
 	"time"
 )
@@ -219,6 +220,16 @@ func TestIntegrationSamples(t *testing.T) {
 	})
 	if delSamplesErr != nil {
 		t.Fatalf("expected nil error, got %v", delSamplesErr)
+	}
+}
+
+func TestIntegrationExport(t *testing.T) {
+	c := getIntegrationClient()
+
+	uri, _ := c.Export()
+
+	if !strings.Contains(uri, "fbcdn.net") {
+		t.Fatalf("uri should contain fbcdn.net, got: %s", uri)
 	}
 }
 

@@ -119,6 +119,12 @@ offset := 0
 client.GetSamples(limit, offset)
 ```
 
+### Export
+
+```go
+downloadURL := client.Export()
+```
+
 ## Testing
 
 Both Unit / Integration tests are executed by TravisCI.

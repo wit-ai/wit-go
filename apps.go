@@ -27,6 +27,12 @@ type App struct {
 	Timezone  string `json:"timezone,omitempty"`
 }
 
+// CreatedApp - https://wit.ai/docs/http/20170307#post__apps_link
+type CreatedApp struct {
+	AccessToken string `json:"access_token"`
+	AppID       string `json:"app_id"`
+}
+
 // GetApps - Returns an array of all apps that you own. https://wit.ai/docs/http/20170307#get__apps_link
 func (c *Client) GetApps(limit int, offset int) ([]App, error) {
 	if limit <= 0 {
@@ -78,7 +84,7 @@ func (c *Client) DeleteApp(id string) error {
 }
 
 // CreateApp - creates new app. https://wit.ai/docs/http/20170307#post__apps_link
-func (c *Client) CreateApp(app App) (*App, error) {
+func (c *Client) CreateApp(app App) (*CreatedApp, error) {
 	appJSON, err := json.Marshal(app)
 	if err != nil {
 		return nil, err
@@ -91,7 +97,7 @@ func (c *Client) CreateApp(app App) (*App, error) {
 
 	defer resp.Close()
 
-	var createdApp *App
+	var createdApp *CreatedApp
 	decoder := json.NewDecoder(resp)
 	err = decoder.Decode(&createdApp)
 

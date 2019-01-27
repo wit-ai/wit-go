@@ -43,7 +43,7 @@ func TestGetApp(t *testing.T) {
 
 func TestCreateApp(t *testing.T) {
 	testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		res.Write([]byte(`{"id": "ai-dee"}`))
+		res.Write([]byte(`{"app_id": "ai-dee"}`))
 	}))
 	defer func() { testServer.Close() }()
 
@@ -55,8 +55,8 @@ func TestCreateApp(t *testing.T) {
 	if err != nil {
 		t.Fatalf("nil error expected, got %v", err)
 	}
-	if app.ID != "ai-dee" {
-		t.Fatalf("id=ai-dee expected, got: %s", app.ID)
+	if app.AppID != "ai-dee" {
+		t.Fatalf("id=ai-dee expected, got: %s", app.AppID)
 	}
 }
 

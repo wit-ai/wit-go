@@ -129,24 +129,24 @@ func TestIntegrationEntities(t *testing.T) {
 	}
 	// add entity value 2
 	if _, err = c.AddEntityValue(integrationEntity.ID, EntityValue{
-		Value:       "HCMC",
-		Expressions: []string{"HCMC"},
+		Value:       "Ho Chi Minh City",
+		Expressions: []string{"Ho Chi Minh City"},
 	}); err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
 	// add entity value expression
-	if _, err = c.AddEntityValueExpression(integrationEntity.ID, "HCMC", "HoChiMinh"); err != nil {
+	if _, err = c.AddEntityValueExpression(integrationEntity.ID, "Ho Chi Minh City", "HoChiMinh"); err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
-	if _, err = c.AddEntityValueExpression(integrationEntity.ID, "HCMC", "hochiminhcity"); err != nil {
+	if _, err = c.AddEntityValueExpression(integrationEntity.ID, "Ho Chi Minh City", "hochiminhcity"); err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
-	if err = c.DeleteEntityValueExpression(integrationEntity.ID, "HCMC", "HoChiMinh"); err != nil {
+	if err = c.DeleteEntityValueExpression(integrationEntity.ID, "Ho Chi Minh City", "HoChiMinh"); err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
 
 	// delete entity value 1
-	if err = c.DeleteEntityValue(integrationEntity.ID, "HCMC"); err != nil {
+	if err = c.DeleteEntityValue(integrationEntity.ID, "Ho Chi Minh City"); err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
 

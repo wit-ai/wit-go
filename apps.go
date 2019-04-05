@@ -57,7 +57,7 @@ func (c *Client) GetApps(limit int, offset int) ([]App, error) {
 
 // GetApp - returns map by ID. https://wit.ai/docs/http/20170307#get__apps__app_id_link
 func (c *Client) GetApp(id string) (*App, error) {
-	resp, err := c.request(http.MethodGet, fmt.Sprintf("/apps/%s", url.QueryEscape(id)), "application/json", nil)
+	resp, err := c.request(http.MethodGet, fmt.Sprintf("/apps/%s", url.PathEscape(id)), "application/json", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (c *Client) GetApp(id string) (*App, error) {
 
 // DeleteApp - deletes app by ID. https://wit.ai/docs/http/20170307#delete__apps__app_id_link
 func (c *Client) DeleteApp(id string) error {
-	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/apps/%s", url.QueryEscape(id)), "application/json", nil)
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/apps/%s", url.PathEscape(id)), "application/json", nil)
 	if err == nil {
 		resp.Close()
 	}
@@ -111,7 +111,7 @@ func (c *Client) UpdateApp(id string, app App) (*App, error) {
 		return nil, err
 	}
 
-	resp, err := c.request(http.MethodPut, fmt.Sprintf("/apps/%s", url.QueryEscape(id)), "application/json", bytes.NewBuffer(appJSON))
+	resp, err := c.request(http.MethodPut, fmt.Sprintf("/apps/%s", url.PathEscape(id)), "application/json", bytes.NewBuffer(appJSON))
 	if err != nil {
 		return nil, err
 	}

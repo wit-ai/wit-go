@@ -1,6 +1,5 @@
 // Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 
-
 package witai
 
 import (
@@ -100,7 +99,7 @@ func (c *Client) Speech(req *MessageRequest) (*MessageResponse, error) {
 }
 
 func buildParseQuery(req *MessageRequest) string {
-	q := fmt.Sprintf("?q=%s", url.QueryEscape(req.Query))
+	q := fmt.Sprintf("?q=%s", url.PathEscape(req.Query))
 	if len(req.MsgID) != 0 {
 		q += fmt.Sprintf("&msg_id=%s", req.MsgID)
 	}

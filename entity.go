@@ -68,7 +68,7 @@ func (c *Client) CreateEntity(entity Entity) (*Entity, error) {
 
 // GetEntity - returns entity by ID. https://wit.ai/docs/http/20170307#get__entities__entity_id_link
 func (c *Client) GetEntity(id string) (*Entity, error) {
-	resp, err := c.request(http.MethodGet, fmt.Sprintf("/entities/%s", url.QueryEscape(id)), "application/json", nil)
+	resp, err := c.request(http.MethodGet, fmt.Sprintf("/entities/%s", url.PathEscape(id)), "application/json", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func (c *Client) GetEntity(id string) (*Entity, error) {
 
 // DeleteEntity - deletes entity by ID. https://wit.ai/docs/http/20170307#delete__entities__entity_id_link
 func (c *Client) DeleteEntity(id string) error {
-	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s", url.QueryEscape(id)), "application/json", nil)
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s", url.PathEscape(id)), "application/json", nil)
 	if err == nil {
 		resp.Close()
 	}
@@ -96,7 +96,7 @@ func (c *Client) DeleteEntity(id string) error {
 
 // DeleteEntityRole - deletes entity role. https://wit.ai/docs/http/20170307#delete__entities__entity_id_role_id_link
 func (c *Client) DeleteEntityRole(entityID string, role string) error {
-	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s:%s", url.QueryEscape(entityID), url.QueryEscape(role)), "application/json", nil)
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s:%s", url.PathEscape(entityID), url.PathEscape(role)), "application/json", nil)
 	if err == nil {
 		resp.Close()
 	}
@@ -111,7 +111,7 @@ func (c *Client) UpdateEntity(id string, entity Entity) error {
 		return err
 	}
 
-	resp, err := c.request(http.MethodPut, fmt.Sprintf("/entities/%s", url.QueryEscape(id)), "application/json", bytes.NewBuffer(entityJSON))
+	resp, err := c.request(http.MethodPut, fmt.Sprintf("/entities/%s", url.PathEscape(id)), "application/json", bytes.NewBuffer(entityJSON))
 	if err != nil {
 		return err
 	}
@@ -129,7 +129,7 @@ func (c *Client) AddEntityValue(entityID string, value EntityValue) (*Entity, er
 		return nil, err
 	}
 
-	resp, err := c.request(http.MethodPost, fmt.Sprintf("/entities/%s/values", url.QueryEscape(entityID)), "application/json", bytes.NewBuffer(valueJSON))
+	resp, err := c.request(http.MethodPost, fmt.Sprintf("/entities/%s/values", url.PathEscape(entityID)), "application/json", bytes.NewBuffer(valueJSON))
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +147,7 @@ func (c *Client) AddEntityValue(entityID string, value EntityValue) (*Entity, er
 
 // DeleteEntityValue - Delete a canonical value from the entity. https://wit.ai/docs/http/20170307#delete__entities__entity_id_values_link
 func (c *Client) DeleteEntityValue(entityID string, value string) error {
-	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s/values/%s", url.QueryEscape(entityID), url.QueryEscape(value)), "application/json", nil)
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s/values/%s", url.PathEscape(entityID), url.PathEscape(value)), "application/json", nil)
 	if err == nil {
 		resp.Close()
 	}
@@ -168,7 +168,7 @@ func (c *Client) AddEntityValueExpression(entityID string, value string, express
 		return nil, err
 	}
 
-	resp, err := c.request(http.MethodPost, fmt.Sprintf("/entities/%s/values/%s/expressions", url.QueryEscape(entityID), url.QueryEscape(value)), "application/json", bytes.NewBuffer(exprJSON))
+	resp, err := c.request(http.MethodPost, fmt.Sprintf("/entities/%s/values/%s/expressions", url.PathEscape(entityID), url.PathEscape(value)), "application/json", bytes.NewBuffer(exprJSON))
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +186,7 @@ func (c *Client) AddEntityValueExpression(entityID string, value string, express
 
 // DeleteEntityValueExpression - Delete an expression of the canonical value of the entity. https://wit.ai/docs/http/20170307#delete__entities__entity_id_values__value_id_expressions_link
 func (c *Client) DeleteEntityValueExpression(entityID string, value string, expression string) error {
-	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s/values/%s/expressions/%s", url.QueryEscape(entityID), url.QueryEscape(value), url.QueryEscape(expression)), "application/json", nil)
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s/values/%s/expressions/%s", url.PathEscape(entityID), url.PathEscape(value), url.PathEscape(expression)), "application/json", nil)
 	if err == nil {
 		resp.Close()
 	}

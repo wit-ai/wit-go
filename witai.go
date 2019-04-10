@@ -4,7 +4,6 @@ package witai
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -82,15 +81,19 @@ func (c *Client) request(method, url string, ct string, body io.Reader) (io.Read
 		decoder := json.NewDecoder(resp.Body)
 		err = decoder.Decode(&e)
 		if err != nil {
-			return nil, errors.New("Internal Error")
+			return nil, fmt.Errorf("unable to decode error message: %s", err.Error())
 		}
 
 		// Wit.ai errors sometimes have "error", sometimes "body" message
 		if len(e.Error) > 0 {
-			return nil, errors.New(e.Error)
+			return nil, fmt.Errorf("unable to make a request. error: %s", e.Error)
 		}
 
-		return nil, errors.New(e.Body)
+		if len(e.Body) > 0 {
+			return nil, fmt.Errorf("unable to make a request. error: %s", e.Body)
+		}
+
+		return nil, fmt.Errorf("unable to make a request. error: %v", e)
 	}
 
 	return resp.Body, nil

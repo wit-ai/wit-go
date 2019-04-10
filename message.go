@@ -66,11 +66,7 @@ func (c *Client) Parse(req *MessageRequest) (*MessageResponse, error) {
 	var msgResp *MessageResponse
 	decoder := json.NewDecoder(resp)
 	err = decoder.Decode(&msgResp)
-	if err != nil {
-		return nil, err
-	}
-
-	return msgResp, nil
+	return msgResp, err
 }
 
 // Speech - sends audio file for parsing
@@ -91,11 +87,7 @@ func (c *Client) Speech(req *MessageRequest) (*MessageResponse, error) {
 	var msgResp *MessageResponse
 	decoder := json.NewDecoder(resp)
 	err = decoder.Decode(&msgResp)
-	if err != nil {
-		return nil, err
-	}
-
-	return msgResp, nil
+	return msgResp, err
 }
 
 func buildParseQuery(req *MessageRequest) string {

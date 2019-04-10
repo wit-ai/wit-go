@@ -20,9 +20,6 @@ func (c *Client) Export() (string, error) {
 
 	var r exportResponse
 	decoder := json.NewDecoder(resp)
-	if err = decoder.Decode(&r); err != nil {
-		return "", err
-	}
-
-	return r.URI, nil
+	err = decoder.Decode(&r)
+	return r.URI, err
 }

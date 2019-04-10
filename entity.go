@@ -59,11 +59,8 @@ func (c *Client) CreateEntity(entity Entity) (*Entity, error) {
 
 	var entityResp *Entity
 	decoder := json.NewDecoder(resp)
-	if err = decoder.Decode(&entityResp); err != nil {
-		return nil, err
-	}
-
-	return entityResp, nil
+	err = decoder.Decode(&entityResp)
+	return entityResp, err
 }
 
 // GetEntity - returns entity by ID. https://wit.ai/docs/http/20170307#get__entities__entity_id_link
@@ -77,11 +74,8 @@ func (c *Client) GetEntity(id string) (*Entity, error) {
 
 	var entity *Entity
 	decoder := json.NewDecoder(resp)
-	if err = decoder.Decode(&entity); err != nil {
-		return nil, err
-	}
-
-	return entity, nil
+	err = decoder.Decode(&entity)
+	return entity, err
 }
 
 // DeleteEntity - deletes entity by ID. https://wit.ai/docs/http/20170307#delete__entities__entity_id_link

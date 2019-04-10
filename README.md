@@ -40,6 +40,8 @@ func main() {
 ### Send an audio file
 
 ```go
+file, _ := os.Open("speech.wav")
+
 msg, _ := client.Speech(&witai.MessageRequest{
 	Speech: &witai.Speech{
 		File:        file,

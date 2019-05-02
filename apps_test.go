@@ -25,7 +25,7 @@ func TestGetApps(t *testing.T) {
 
 func TestGetApp(t *testing.T) {
 	testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		res.Write([]byte(`{"name": "alarm-clock"}`))
+		res.Write([]byte(`{"name": "alarm-clock","training_status":"done"}`))
 	}))
 	defer func() { testServer.Close() }()
 
@@ -37,6 +37,9 @@ func TestGetApp(t *testing.T) {
 	}
 
 	if app.Name != "alarm-clock" {
+		t.Fatalf("expected alarm-clock, got: %v", app)
+	}
+	if app.TrainingStatus != Done {
 		t.Fatalf("expected alarm-clock, got: %v", app)
 	}
 }

@@ -8,6 +8,15 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"time"
+)
+
+type AppTrainingStatus string
+
+const (
+	Done      AppTrainingStatus = "done"
+	Scheduled AppTrainingStatus = "scheduled"
+	Ongoing   AppTrainingStatus = "ongoing"
 )
 
 // App - https://wit.ai/docs/http/20170307#get__apps_link
@@ -25,6 +34,11 @@ type App struct {
 	AppID     string `json:"app_id,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`
 	Timezone  string `json:"timezone,omitempty"`
+	// Training information
+	LastTrainingDurationSecs int               `json:"last_training_duration_secs,omitempty"`
+	WillTrainAt              time.Time         `json:"will_train_at,omitempty"`
+	LastTrainedAt            time.Time         `json:"last_trained_at,omitempty"`
+	TrainingStatus           AppTrainingStatus `json:"training_status,omitempty"`
 }
 
 // CreatedApp - https://wit.ai/docs/http/20170307#post__apps_link

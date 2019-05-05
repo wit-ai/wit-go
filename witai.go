@@ -13,6 +13,8 @@ import (
 const (
 	// DefaultVersion - https://wit.ai/docs/http/20170307
 	DefaultVersion = "20170307"
+	// WitTimeFormat - the custom format of the timestamp sent by the api
+	WitTimeFormat = "2006-01-02T15:04:05Z0700"
 )
 
 // Client - Wit.ai client type

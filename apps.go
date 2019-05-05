@@ -8,6 +8,17 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
+	"time"
+)
+
+// AppTrainingStatus - Represents the status of an app
+type AppTrainingStatus string
+
+const (
+	Done      AppTrainingStatus = "done"
+	Scheduled AppTrainingStatus = "scheduled"
+	Ongoing   AppTrainingStatus = "ongoing"
 )
 
 // App - https://wit.ai/docs/http/20170307#get__apps_link
@@ -25,6 +36,28 @@ type App struct {
 	AppID     string `json:"app_id,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`
 	Timezone  string `json:"timezone,omitempty"`
+	// Training information
+	LastTrainingDurationSecs int               `json:"last_training_duration_secs,omitempty"`
+	WillTrainAt              WitAiTime         `json:"will_train_at,omitempty"`
+	LastTrainedAt            WitAiTime         `json:"last_trained_at,omitempty"`
+	TrainingStatus           AppTrainingStatus `json:"training_status,omitempty"`
+}
+
+// WitAiTime - Custom type to encapsulated a time.Time
+type WitAiTime struct {
+	time.Time
+}
+
+// UnmarshalJSON - Our unmarshal function for our custom type
+func (witTime *WitAiTime) UnmarshalJSON(input []byte) error {
+	strInput := string(input)
+	strInput = strings.Trim(strInput, `"`)
+	newTime, err := time.Parse(WitTimeFormat, strInput)
+	if err != nil {
+		return err
+	}
+	witTime.Time = newTime
+	return nil
 }
 
 // CreatedApp - https://wit.ai/docs/http/20170307#post__apps_link

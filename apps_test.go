@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestGetApps(t *testing.T) {
@@ -25,7 +26,7 @@ func TestGetApps(t *testing.T) {
 
 func TestGetApp(t *testing.T) {
 	testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		res.Write([]byte(`{"name": "alarm-clock"}`))
+		res.Write([]byte(`{"name": "alarm-clock","training_status":"done","will_train_at":"2018-07-29T18:17:34-0700","last_training_duration_secs":42,"last_trained_at":"2018-07-29T18:16:34-0700"}`))
 	}))
 	defer func() { testServer.Close() }()
 
@@ -38,6 +39,23 @@ func TestGetApp(t *testing.T) {
 
 	if app.Name != "alarm-clock" {
 		t.Fatalf("expected alarm-clock, got: %v", app)
+	}
+	if app.TrainingStatus != Done {
+		t.Fatalf("expected Done, got: %v", app)
+	}
+
+	expectedNextTrainTime, _ := time.Parse(WitTimeFormat, "2018-07-29T18:17:34-0700")
+	if !app.WillTrainAt.Time.Equal(expectedNextTrainTime) {
+		t.Fatalf("expected %v got: %v", app.WillTrainAt, expectedNextTrainTime)
+	}
+
+	if app.LastTrainingDurationSecs != 42 {
+		t.Fatalf("Expected 42 got %v", app.LastTrainingDurationSecs)
+	}
+
+	expectedLastTrainTime, _ := time.Parse(WitTimeFormat, "2018-07-29T18:16:34-0700")
+	if !app.LastTrainedAt.Time.Equal(expectedLastTrainTime) {
+		t.Fatalf("expected %v got: %v", app.WillTrainAt, expectedLastTrainTime)
 	}
 }
 

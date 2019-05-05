@@ -184,7 +184,7 @@ func TestIntegrationSamples(t *testing.T) {
 	// cleanup
 	c.DeleteSamples([]Sample{
 		Sample{
-			Text: "I live in London",
+			Text: "I want to fly SFO",
 		},
 	})
 
@@ -194,7 +194,15 @@ func TestIntegrationSamples(t *testing.T) {
 	// samples test
 	_, validateErr := c.ValidateSamples([]Sample{
 		Sample{
-			Text: "I live in London",
+			Text: "I want to fly SFO",
+			Entities: []SampleEntity{
+				SampleEntity{
+					Entity: "wit$location",
+					Value: "SFO",
+					Start: 17,
+					End: 20,
+				},
+			},
 		},
 	})
 	if validateErr != nil {
@@ -216,7 +224,7 @@ func TestIntegrationSamples(t *testing.T) {
 	// delete samples
 	_, delSamplesErr := c.DeleteSamples([]Sample{
 		Sample{
-			Text: "I live in London",
+			Text: "I want to fly SFO",
 		},
 	})
 	if delSamplesErr != nil {

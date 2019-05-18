@@ -69,7 +69,7 @@ func TestIntegrationApps(t *testing.T) {
 	apps, err := c.GetApps(10, 0)
 	for _, a := range apps {
 		if a.Name == integrationApp.Name {
-			if err := c.DeleteApp(a.AppID); err != nil {
+			if err := c.DeleteApp(a.ID); err != nil {
 				fmt.Printf("unable to delete integration app: %s", err.Error())
 			}
 		}

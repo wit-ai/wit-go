@@ -4,7 +4,6 @@
 package witai
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -59,41 +58,6 @@ func TestIntegrationUnknownEntity(t *testing.T) {
 	_, err := c.GetEntity("unknown_id")
 	if err == nil {
 		t.Fatalf("expected error, got: nil")
-	}
-}
-
-func TestIntegrationApps(t *testing.T) {
-	c := getIntegrationClient()
-
-	// delete app
-	apps, err := c.GetApps(10, 0)
-	for _, a := range apps {
-		if a.Name == integrationApp.Name {
-			if err := c.DeleteApp(a.ID); err != nil {
-				fmt.Printf("unable to delete integration app: %s", err.Error())
-			}
-		}
-	}
-
-	app, err := c.CreateApp(integrationApp)
-	if err != nil {
-		t.Fatalf("not expected error, got %v", err)
-	}
-
-	// create may take some time
-	time.Sleep(time.Second)
-
-	getApp, err := c.GetApp(app.AppID)
-	if err != nil {
-		t.Fatalf("not expected error, got %v", err)
-	}
-	if getApp.Name != integrationApp.Name {
-		t.Fatalf("expected app name %s, got %s", integrationApp.Name, getApp.Name)
-	}
-
-	err = c.DeleteApp(app.AppID)
-	if err != nil {
-		t.Fatalf("not expected error, got %v", err)
 	}
 }
 

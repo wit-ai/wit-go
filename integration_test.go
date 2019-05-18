@@ -4,6 +4,7 @@
 package witai
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -68,7 +69,9 @@ func TestIntegrationApps(t *testing.T) {
 	apps, err := c.GetApps(10, 0)
 	for _, a := range apps {
 		if a.Name == integrationApp.Name {
-			c.DeleteApp(a.ID)
+			if err := c.DeleteApp(a.AppID); err != nil {
+				fmt.Printf("unable to delete integration app: %s", err.Error())
+			}
 		}
 	}
 
@@ -198,9 +201,9 @@ func TestIntegrationSamples(t *testing.T) {
 			Entities: []SampleEntity{
 				SampleEntity{
 					Entity: "wit$location",
-					Value: "SFO",
-					Start: 17,
-					End: 20,
+					Value:  "SFO",
+					Start:  17,
+					End:    20,
 				},
 			},
 		},

@@ -61,8 +61,9 @@ func TestIntegrationUnknownEntity(t *testing.T) {
 	}
 }
 
-func TestIntegrationEntities(t *testing.T) {
+func TestIntegrationCreateEntity(t *testing.T) {
 	c := getIntegrationClient()
+
 	// just to make sure we don't create duplicates
 	c.DeleteEntity(integrationEntity.ID)
 
@@ -79,13 +80,25 @@ func TestIntegrationEntities(t *testing.T) {
 	}
 
 	// create may take some time
-	time.Sleep(time.Second)
+	time.Sleep(2 * time.Second)
+}
+
+func TestIntegrationUpdateEntity(t *testing.T) {
+	c := getIntegrationClient()
 
 	// update entity
-	err = c.UpdateEntity(integrationEntity.ID, integrationEntityUpdateFields)
+	err := c.UpdateEntity(integrationEntity.ID, integrationEntityUpdateFields)
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
+
+	time.Sleep(time.Second)
+}
+
+func TestIntegrationAddEntityValue(t *testing.T) {
+	c := getIntegrationClient()
+
+	var err error
 
 	// add entity value 1
 	if _, err = c.AddEntityValue(integrationEntity.ID, EntityValue{
@@ -116,6 +129,10 @@ func TestIntegrationEntities(t *testing.T) {
 	if err = c.DeleteEntityValue(integrationEntity.ID, "Ho Chi Minh City"); err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
+}
+
+func TestIntegrationGetEntity(t *testing.T) {
+	c := getIntegrationClient()
 
 	// check entity
 	e, err := c.GetEntity(integrationEntity.ID)
@@ -150,7 +167,7 @@ func TestIntegrationSamples(t *testing.T) {
 
 	// cleanup
 	c.DeleteSamples([]Sample{
-		Sample{
+		{
 			Text: "I want to fly SFO",
 		},
 	})
@@ -160,10 +177,10 @@ func TestIntegrationSamples(t *testing.T) {
 
 	// samples test
 	_, validateErr := c.ValidateSamples([]Sample{
-		Sample{
+		{
 			Text: "I want to fly SFO",
 			Entities: []SampleEntity{
-				SampleEntity{
+				{
 					Entity: "wit$location",
 					Value:  "SFO",
 					Start:  17,
@@ -190,7 +207,7 @@ func TestIntegrationSamples(t *testing.T) {
 
 	// delete samples
 	_, delSamplesErr := c.DeleteSamples([]Sample{
-		Sample{
+		{
 			Text: "I want to fly SFO",
 		},
 	})

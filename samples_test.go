@@ -32,7 +32,7 @@ func TestValidateSamples(t *testing.T) {
 	c := NewClient(unitTestToken)
 	c.APIBase = testServer.URL
 	r, _ := c.ValidateSamples([]Sample{
-		Sample{
+		{
 			Text: "hello",
 		},
 	})
@@ -51,7 +51,7 @@ func TestDeleteSamples(t *testing.T) {
 	c := NewClient(unitTestToken)
 	c.APIBase = testServer.URL
 	r, _ := c.DeleteSamples([]Sample{
-		Sample{
+		{
 			Text: "hello",
 		},
 	})

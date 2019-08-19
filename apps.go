@@ -16,9 +16,12 @@ import (
 type AppTrainingStatus string
 
 const (
-	Done      AppTrainingStatus = "done"
+	// Done status
+	Done AppTrainingStatus = "done"
+	// Scheduled status
 	Scheduled AppTrainingStatus = "scheduled"
-	Ongoing   AppTrainingStatus = "ongoing"
+	// Ongoing status
+	Ongoing AppTrainingStatus = "ongoing"
 )
 
 // App - https://wit.ai/docs/http/20170307#get__apps_link
@@ -38,18 +41,18 @@ type App struct {
 	Timezone  string `json:"timezone,omitempty"`
 	// Training information
 	LastTrainingDurationSecs int               `json:"last_training_duration_secs,omitempty"`
-	WillTrainAt              WitAiTime         `json:"will_train_at,omitempty"`
-	LastTrainedAt            WitAiTime         `json:"last_trained_at,omitempty"`
+	WillTrainAt              Time              `json:"will_train_at,omitempty"`
+	LastTrainedAt            Time              `json:"last_trained_at,omitempty"`
 	TrainingStatus           AppTrainingStatus `json:"training_status,omitempty"`
 }
 
-// WitAiTime - Custom type to encapsulated a time.Time
-type WitAiTime struct {
+// Time - Custom type to encapsulated a time.Time
+type Time struct {
 	time.Time
 }
 
 // UnmarshalJSON - Our unmarshal function for our custom type
-func (witTime *WitAiTime) UnmarshalJSON(input []byte) error {
+func (witTime *Time) UnmarshalJSON(input []byte) error {
 	strInput := string(input)
 	strInput = strings.Trim(strInput, `"`)
 	newTime, err := time.Parse(WitTimeFormat, strInput)

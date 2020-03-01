@@ -20,8 +20,8 @@ type SampleEntity struct {
 	Entity       string         `json:"entity"`
 	Value        string         `json:"value"`
 	Role         string         `json:"role"`
-	Start        int            `json:"start"`
-	End          int            `json:"end"`
+	Start        int            `json:"start,omitempty"`
+	End          int            `json:"end,omitempty"`
 	Subentitites []SampleEntity `json:"subentities"`
 }
 

@@ -181,6 +181,10 @@ func TestIntegrationSamples(t *testing.T) {
 			Text: "I want to fly SFO",
 			Entities: []SampleEntity{
 				{
+					Entity: "intent",
+					Value:  "flight_request",
+				},
+				{
 					Entity: "wit$location",
 					Value:  "SFO",
 					Start:  17,

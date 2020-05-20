@@ -23,7 +23,7 @@ var (
 		Lang:        "en",
 	}
 	integrationEntityUpdateFields = Entity{
-		Name:    "integration_entity_id",
+		ID:      "integration_entity_id",
 		Lookups: []string{"keywords"},
 		Doc:     "integration_entity_doc_updated",
 	}
@@ -168,7 +168,7 @@ func TestIntegrationSamples(t *testing.T) {
 	// cleanup
 	c.DeleteSamples([]Sample{
 		{
-			Text: "I want to fly SFO",
+			Text: "I want to fly to SFO",
 		},
 	})
 
@@ -176,25 +176,20 @@ func TestIntegrationSamples(t *testing.T) {
 	time.Sleep(time.Second * 5)
 
 	// samples test
-	start := 17
-	end := 20
-	_, validateErr := c.ValidateSamples([]Sample{
+	res, validateErr := c.ValidateSamples([]Sample{
 		{
-			Text: "I want to fly SFO",
+			Text: "I want to fly to SFO",
 			Entities: []SampleEntity{
-				{
-					Entity: "intent",
-					Value:  "flight_request",
-				},
 				{
 					Entity: "wit$location",
 					Value:  "SFO",
-					Start:  &start,
-					End:    &end,
+					Start:  17,
+					End:    20,
 				},
 			},
 		},
 	})
+
 	if validateErr != nil {
 		t.Fatalf("expected nil error, got %v", validateErr)
 	}
@@ -214,7 +209,7 @@ func TestIntegrationSamples(t *testing.T) {
 	// delete samples
 	_, delSamplesErr := c.DeleteSamples([]Sample{
 		{
-			Text: "I want to fly SFO",
+			Text: "I want to fly to SFO",
 		},
 	})
 	if delSamplesErr != nil {

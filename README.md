@@ -68,6 +68,7 @@ client.GetEntity("favorite_city")
 Update:
 ```go
 client.UpdateEntity("favorite_city", witai.Entity{
+	ID:  "my_entity_id",
 	Doc: "My favorite city",
 })
 ```
@@ -110,12 +111,20 @@ Validate samples (sentence + entities annotations) to train your app programmati
 ```go
 client.ValidateSamples([]witai.Sample{
 	Sample{
-		Text: "I live in HCMC",
+		Text: "I want to fly SFO",
+		Entities: []SampleEntity{
+			{
+				Entity: "wit$location",
+				Value:  "SFO",
+				Start:  17,
+				End:    20,
+			},
+		},
 	},
 })
 ```
 
-Get validate samples:
+Get samples:
 ```go
 limit := 10
 offset := 0

@@ -176,6 +176,8 @@ func TestIntegrationSamples(t *testing.T) {
 	time.Sleep(time.Second * 5)
 
 	// samples test
+	start := 17
+	end := 20
 	_, validateErr := c.ValidateSamples([]Sample{
 		{
 			Text: "I want to fly SFO",
@@ -187,8 +189,8 @@ func TestIntegrationSamples(t *testing.T) {
 				{
 					Entity: "wit$location",
 					Value:  "SFO",
-					Start:  17,
-					End:    20,
+					Start:  &start,
+					End:    &end,
 				},
 			},
 		},

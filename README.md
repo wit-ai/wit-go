@@ -14,8 +14,6 @@ go get -u github.com/wit-ai/wit-go
 
 ## Usage
 
-### Parse text
-
 ```go
 package main
 
@@ -35,106 +33,6 @@ func main() {
 	})
 	fmt.Printf("%v", msg)
 }
-```
-
-### Send an audio file
-
-```go
-file, _ := os.Open("speech.wav")
-
-msg, _ := client.Speech(&witai.MessageRequest{
-	Speech: &witai.Speech{
-		File:        file,
-		ContentType: "audio/raw;encoding=unsigned-integer;bits=16;rate=16k;endian=little",
-	},
-})
-```
-
-### Entities
-
-Create:
-```go
-client.CreateEntity(witai.Entity{
-	ID:  "favorite_city",
-	Doc: "A city that I like",
-})
-```
-
-Get:
-```go
-client.GetEntity("favorite_city")
-```
-
-Update:
-```go
-client.UpdateEntity("favorite_city", witai.Entity{
-	ID:  "my_entity_id",
-	Doc: "My favorite city",
-})
-```
-
-Delete:
-```go
-client.DeleteEntity("favorite_city")
-```
-
-### Entity values
-
-Add:
-```go
-client.AddEntityValue("favorite_city", witai.EntityValue{
-	Value: "HCMC",
-	Expressions: ["HoChiMinh", "HCMC"],
-})
-```
-
-Delete:
-```go
-client.DeleteEntityValue("favorite_city", "HCMC")
-```
-
-### Value expressions
-
-Add:
-```go
-client.AddEntityValueExpression("favorite_city", "HCMC", "HoChiMinh")
-```
-
-Delete:
-```go
-client.DeleteEntityValueExpression("favorite_city", "HCMC", "HoChiMinh")
-```
-
-### Training
-
-Validate samples (sentence + entities annotations) to train your app programmatically:
-```go
-client.ValidateSamples([]witai.Sample{
-	Sample{
-		Text: "I want to fly SFO",
-		Entities: []SampleEntity{
-			{
-				Entity: "wit$location",
-				Value:  "SFO",
-				Start:  17,
-				End:    20,
-			},
-		},
-	},
-})
-```
-
-Get samples:
-```go
-limit := 10
-offset := 0
-client.GetSamples(limit, offset)
-```
-
-### Export
-
-```go
-downloadURL := client.Export()
 ```
 
 ## Testing

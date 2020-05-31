@@ -176,7 +176,7 @@ func TestIntegrationSamples(t *testing.T) {
 	time.Sleep(time.Second * 5)
 
 	// samples test
-	res, validateErr := c.ValidateSamples([]Sample{
+	_, validateErr := c.ValidateSamples([]Sample{
 		{
 			Text: "I want to fly to SFO",
 			Entities: []SampleEntity{

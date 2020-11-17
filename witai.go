@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	// DefaultVersion - https://wit.ai/docs/http/20170307
-	DefaultVersion = "20170307"
+	// DefaultVersion - https://wit.ai/docs/http/20200513/
+	DefaultVersion = "20200513"
 	// WitTimeFormat - the custom format of the timestamp sent by the api
 	WitTimeFormat = "2006-01-02T15:04:05Z0700"
 )

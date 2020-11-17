@@ -36,7 +36,7 @@ type Speech struct {
 
 // MessageContext - https://wit.ai/docs/http/20170307#context_link
 type MessageContext struct {
-	TeferenceTime string        `json:"reference_time"` // "2014-10-30T12:18:45-07:00"
+	ReferenceTime string        `json:"reference_time"` // "2014-10-30T12:18:45-07:00"
 	Timezone      string        `json:"timezone"`
 	Locale        string        `json:"locale"`
 	Coords        MessageCoords `json:"coords"`

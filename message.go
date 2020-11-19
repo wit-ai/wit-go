@@ -128,6 +128,12 @@ func buildParseQuery(req *MessageRequest) string {
 	if req.Tag != "" {
 		q += fmt.Sprintf("&tag=%s", req.Tag)
 	}
+	if req.Context != nil {
+		b, _ := json.Marshal(req.Context)
+		if b != nil {
+			q += fmt.Sprintf("&context=%s", url.PathEscape(string(b)))
+		}
+	}
 
 	return q
 }

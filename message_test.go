@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"reflect"
 	"testing"
 )
@@ -144,5 +145,36 @@ func TestSpeech(t *testing.T) {
 
 	if !reflect.DeepEqual(msg, wantMessage) {
 		t.Fatalf("expected \n\tmsg %v \n\tgot %v", wantMessage, msg)
+	}
+}
+
+func Test_buildParseQuery(t *testing.T) {
+	want := "?q=" + url.PathEscape("hello world") +
+		"&n=1&tag=tag" +
+		"&context=" +
+		url.PathEscape("{"+
+			"\"reference_time\":\"2014-10-30T12:18:45-07:00\","+
+			"\"timezone\":\"America/Los_Angeles\","+
+			"\"locale\":\"en_US\","+
+			"\"coords\":{\"lat\":32.47104,\"long\":-122.14703}"+
+			"}")
+
+	got := buildParseQuery(&MessageRequest{
+		Query: "hello world",
+		N:     1,
+		Tag:   "tag",
+		Context: &MessageContext{
+			Locale: "en_US",
+			Coords: MessageCoords{
+				Lat:  32.47104,
+				Long: -122.14703,
+			},
+			Timezone:      "America/Los_Angeles",
+			ReferenceTime: "2014-10-30T12:18:45-07:00",
+		},
+	})
+
+	if got != want {
+		t.Fatalf("expected \n\tquery = %v \n\tgot = %v", want, got)
 	}
 }

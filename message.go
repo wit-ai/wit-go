@@ -11,21 +11,51 @@ import (
 	"net/url"
 )
 
-// MessageResponse - https://wit.ai/docs/http/20170307#get__message_link
+// MessageResponse - https://wit.ai/docs/http/20200513/#get__message_link
 type MessageResponse struct {
-	ID       string                 `json:"msg_id"`
-	Text     string                 `json:"_text"`
-	Entities map[string]interface{} `json:"entities"`
+	ID       string                     `json:"msg_id"`
+	Text     string                     `json:"text"`
+	Intents  []MessageIntent            `json:"intents"`
+	Entities map[string][]MessageEntity `json:"entities"`
+	Traits   map[string][]MessageTrait  `json:"traits"`
 }
 
-// MessageRequest - https://wit.ai/docs/http/20170307#get__message_link
+// MessageEntity - https://wit.ai/docs/http/20200513/#get__message_link
+type MessageEntity struct {
+	ID         string                 `json:"id"`
+	Name       string                 `json:"name"`
+	Role       string                 `json:"role"`
+	Start      int                    `json:"start"`
+	End        int                    `json:"end"`
+	Body       string                 `json:"body"`
+	Value      string                 `json:"value"`
+	Confidence float64                `json:"confidence"`
+	Entities   []MessageEntity        `json:"entities"`
+	Extra      map[string]interface{} `json:"-"`
+}
+
+// MessageTrait - https://wit.ai/docs/http/20200513/#get__message_link
+type MessageTrait struct {
+	ID         string                 `json:"id"`
+	Value      string                 `json:"value"`
+	Confidence float64                `json:"confidence"`
+	Extra      map[string]interface{} `json:"-"`
+}
+
+// MessageIntent - https://wit.ai/docs/http/20200513/#get__message_link
+type MessageIntent struct {
+	ID         string  `json:"id"`
+	Name       string  `json:"name"`
+	Confidence float64 `json:"confidence"`
+}
+
+// MessageRequest - https://wit.ai/docs/http/20200513/#get__message_link
 type MessageRequest struct {
-	Query    string          `json:"q"`
-	MsgID    string          `json:"msg_id"`
-	N        int             `json:"n"`
-	ThreadID string          `json:"thread_id"`
-	Context  *MessageContext `json:"context"`
-	Speech   *Speech         `json:"-"`
+	Query   string          `json:"q"`
+	Tag     string          `json:"tag"`
+	N       int             `json:"n"`
+	Context *MessageContext `json:"context"`
+	Speech  *Speech         `json:"-"`
 }
 
 // Speech - https://wit.ai/docs/http/20170307#post__speech_link
@@ -92,14 +122,11 @@ func (c *Client) Speech(req *MessageRequest) (*MessageResponse, error) {
 
 func buildParseQuery(req *MessageRequest) string {
 	q := fmt.Sprintf("?q=%s", url.PathEscape(req.Query))
-	if len(req.MsgID) != 0 {
-		q += fmt.Sprintf("&msg_id=%s", req.MsgID)
-	}
 	if req.N != 0 {
 		q += fmt.Sprintf("&n=%d", req.N)
 	}
-	if len(req.ThreadID) != 0 {
-		q += fmt.Sprintf("&thread_id=%s", req.ThreadID)
+	if req.Tag != "" {
+		q += fmt.Sprintf("&tag=%s", req.Tag)
 	}
 
 	return q

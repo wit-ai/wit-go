@@ -34,11 +34,10 @@ type errorResp struct {
 
 // NewClient - returns Wit.ai client for default API version
 func NewClient(token string) *Client {
-	return NewClientWithVersion(token, DefaultVersion)
+	return newClientWithVersion(token, DefaultVersion)
 }
 
-// NewClientWithVersion - returns Wit.ai client for specified API version
-func NewClientWithVersion(token, version string) *Client {
+func newClientWithVersion(token, version string) *Client {
 	headerAuth := fmt.Sprintf("Bearer %s", token)
 	headerAccept := fmt.Sprintf("application/vnd.wit.%s+json", version)
 

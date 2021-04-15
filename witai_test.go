@@ -15,13 +15,3 @@ func TestNewClient(t *testing.T) {
 		t.Fatalf("client default version is not set")
 	}
 }
-
-func TestNewClientWithVersion(t *testing.T) {
-	c := NewClientWithVersion("token", "v2")
-	if c == nil {
-		t.Fatalf("client is nil")
-	}
-	if c.Version != "v2" {
-		t.Fatalf("client v2 version is not set")
-	}
-}

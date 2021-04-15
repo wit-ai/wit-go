@@ -10,40 +10,45 @@ import (
 	"net/url"
 )
 
-// Entity - https://wit.ai/docs/http/20170307#post__entities_link
+// Entity represents a wit-ai Entity.
+//
+// https://wit.ai/docs/http/20200513/#post__entities_link
 type Entity struct {
-	ID      string        `json:"id"`
-	Doc     string        `json:"doc"`
-	Name    string        `json:"name,omitempty"`
-	Lang    string        `json:"lang,omitempty"`
-	Builtin bool          `json:"builtin,omitempty"`
-	Lookups []string      `json:"lookups,omitempty"`
-	Values  []EntityValue `json:"values,omitempty"`
+	ID       string          `json:"id"`
+	Name     string          `json:"name"`
+	Lookups  []string        `json:"lookups,omitempty"`
+	Roles    []string        `json:"roles,omitempty"`
+	Keywords []EntityKeyword `json:"keywords,omitempty"`
 }
 
-// EntityValue - https://wit.ai/docs/http/20170307#get__entities__entity_id_link
-type EntityValue struct {
-	Value       string   `json:"value"`
-	Expressions []string `json:"expressions"`
-	MetaData    string   `json:"metadata"`
+// EntityKeyword is a keyword lookup for an Entity.
+//
+// https://wit.ai/docs/http/20200513/#post__entities__entity_keywords_link
+type EntityKeyword struct {
+	Keyword  string   `json:"keyword"`
+	Synonyms []string `json:"synonyms"`
 }
 
-// GetEntities - returns list of entities. https://wit.ai/docs/http/20170307#get__entities_link
-func (c *Client) GetEntities() ([]string, error) {
+// GetEntities - returns list of entities.
+//
+// https://wit.ai/docs/http/20200513/#get__entities_link
+func (c *Client) GetEntities() ([]Entity, error) {
 	resp, err := c.request(http.MethodGet, "/entities", "application/json", nil)
 	if err != nil {
-		return []string{}, err
+		return []Entity{}, err
 	}
 
 	defer resp.Close()
 
-	var entities []string
+	var entities []Entity
 	decoder := json.NewDecoder(resp)
 	err = decoder.Decode(&entities)
 	return entities, err
 }
 
-// CreateEntity - Creates a new entity with the given attributes. https://wit.ai/docs/http/20170307#post__entities_link
+// CreateEntity - Creates a new entity with the given attributes
+//
+// https://wit.ai/docs/http/20200513/#post__entities_link
 func (c *Client) CreateEntity(entity Entity) (*Entity, error) {
 	entityJSON, err := json.Marshal(entity)
 	if err != nil {
@@ -63,9 +68,11 @@ func (c *Client) CreateEntity(entity Entity) (*Entity, error) {
 	return entityResp, err
 }
 
-// GetEntity - returns entity by ID. https://wit.ai/docs/http/20170307#get__entities__entity_id_link
-func (c *Client) GetEntity(id string) (*Entity, error) {
-	resp, err := c.request(http.MethodGet, fmt.Sprintf("/entities/%s", url.PathEscape(id)), "application/json", nil)
+// GetEntity - returns entity by ID or name.
+//
+// https://wit.ai/docs/http/20200513/#get__entities__entity_link
+func (c *Client) GetEntity(entityID string) (*Entity, error) {
+	resp, err := c.request(http.MethodGet, fmt.Sprintf("/entities/%s", url.PathEscape(entityID)), "application/json", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -78,34 +85,16 @@ func (c *Client) GetEntity(id string) (*Entity, error) {
 	return entity, err
 }
 
-// DeleteEntity - deletes entity by ID. https://wit.ai/docs/http/20170307#delete__entities__entity_id_link
-func (c *Client) DeleteEntity(id string) error {
-	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s", url.PathEscape(id)), "application/json", nil)
-	if err == nil {
-		resp.Close()
-	}
-
-	return err
-}
-
-// DeleteEntityRole - deletes entity role. https://wit.ai/docs/http/20170307#delete__entities__entity_id_role_id_link
-func (c *Client) DeleteEntityRole(entityID string, role string) error {
-	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s:%s", url.PathEscape(entityID), url.PathEscape(role)), "application/json", nil)
-	if err == nil {
-		resp.Close()
-	}
-
-	return err
-}
-
-// UpdateEntity - Updates an entity. https://wit.ai/docs/http/20170307#put__entities__entity_id_link
-func (c *Client) UpdateEntity(id string, entity Entity) error {
+// UpdateEntity - Updates an entity by ID or name.
+//
+// https://wit.ai/docs/http/20200513/#put__entities__entity_link
+func (c *Client) UpdateEntity(entityID string, entity Entity) error {
 	entityJSON, err := json.Marshal(entity)
 	if err != nil {
 		return err
 	}
 
-	resp, err := c.request(http.MethodPut, fmt.Sprintf("/entities/%s", url.PathEscape(id)), "application/json", bytes.NewBuffer(entityJSON))
+	resp, err := c.request(http.MethodPut, fmt.Sprintf("/entities/%s", url.PathEscape(entityID)), "application/json", bytes.NewBuffer(entityJSON))
 	if err != nil {
 		return err
 	}
@@ -116,32 +105,11 @@ func (c *Client) UpdateEntity(id string, entity Entity) error {
 	return decoder.Decode(&entity)
 }
 
-// AddEntityValue - Add a possible value into the list of values for the keyword entity. https://wit.ai/docs/http/20170307#post__entities__entity_id_values_link
-func (c *Client) AddEntityValue(entityID string, value EntityValue) (*Entity, error) {
-	valueJSON, err := json.Marshal(value)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.request(http.MethodPost, fmt.Sprintf("/entities/%s/values", url.PathEscape(entityID)), "application/json", bytes.NewBuffer(valueJSON))
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Close()
-
-	var entityResp *Entity
-	decoder := json.NewDecoder(resp)
-	if err = decoder.Decode(&entityResp); err != nil {
-		return nil, err
-	}
-
-	return entityResp, nil
-}
-
-// DeleteEntityValue - Delete a canonical value from the entity. https://wit.ai/docs/http/20170307#delete__entities__entity_id_values_link
-func (c *Client) DeleteEntityValue(entityID string, value string) error {
-	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s/values/%s", url.PathEscape(entityID), url.PathEscape(value)), "application/json", nil)
+// DeleteEntity - deletes entity by ID or name.
+//
+// https://wit.ai/docs/http/20200513/#delete__entities__entity_link
+func (c *Client) DeleteEntity(entityID string) error {
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s", url.PathEscape(entityID)), "application/json", nil)
 	if err == nil {
 		resp.Close()
 	}
@@ -149,20 +117,28 @@ func (c *Client) DeleteEntityValue(entityID string, value string) error {
 	return err
 }
 
-// AddEntityValueExpression - Create a new expression of the canonical value of the keyword entity. https://wit.ai/docs/http/20170307#post__entities__entity_id_values__value_id_expressions_link
-func (c *Client) AddEntityValueExpression(entityID string, value string, expression string) (*Entity, error) {
-	type expr struct {
-		Expression string `json:"expression"`
+// DeleteEntityRole - deletes entity role.
+//
+// https://wit.ai/docs/http/20200513/#delete__entities__entity_role_link
+func (c *Client) DeleteEntityRole(entityID string, role string) error {
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s:%s", url.PathEscape(entityID), url.PathEscape(role)), "application/json", nil)
+	if err == nil {
+		resp.Close()
 	}
 
-	exprJSON, err := json.Marshal(expr{
-		Expression: expression,
-	})
+	return err
+}
+
+// AddEntityKeyword - Add a possible value into the list of values for the keyword entity.
+//
+// https://wit.ai/docs/http/20200513/#post__entities__entity_keywords_link
+func (c *Client) AddEntityKeyword(entityID string, keyword EntityKeyword) (*Entity, error) {
+	valueJSON, err := json.Marshal(keyword)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.request(http.MethodPost, fmt.Sprintf("/entities/%s/values/%s/expressions", url.PathEscape(entityID), url.PathEscape(value)), "application/json", bytes.NewBuffer(exprJSON))
+	resp, err := c.request(http.MethodPost, fmt.Sprintf("/entities/%s/keywords", url.PathEscape(entityID)), "application/json", bytes.NewBuffer(valueJSON))
 	if err != nil {
 		return nil, err
 	}
@@ -178,9 +154,54 @@ func (c *Client) AddEntityValueExpression(entityID string, value string, express
 	return entityResp, nil
 }
 
-// DeleteEntityValueExpression - Delete an expression of the canonical value of the entity. https://wit.ai/docs/http/20170307#delete__entities__entity_id_values__value_id_expressions_link
-func (c *Client) DeleteEntityValueExpression(entityID string, value string, expression string) error {
-	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s/values/%s/expressions/%s", url.PathEscape(entityID), url.PathEscape(value), url.PathEscape(expression)), "application/json", nil)
+// DeleteEntityKeyword - Delete a keyword from the keywords entity.
+//
+// https://wit.ai/docs/http/20200513/#delete__entities__entity_keywords__keyword_link
+func (c *Client) DeleteEntityKeyword(entityID string, keyword string) error {
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s/keywords/%s", url.PathEscape(entityID), url.PathEscape(keyword)), "application/json", nil)
+	if err == nil {
+		resp.Close()
+	}
+
+	return err
+}
+
+// AddEntityKeywordSynonym - Create a new synonym of the canonical value of the keywords entity.
+//
+// https://wit.ai/docs/http/20200513/#post__entities__entity_keywords__keyword_synonyms_link
+func (c *Client) AddEntityKeywordSynonym(entityID string, keyword string, synonym string) (*Entity, error) {
+	type syn struct {
+		Synonym string `json:"synonym"`
+	}
+
+	exprJSON, err := json.Marshal(syn{
+		Synonym: synonym,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.request(http.MethodPost, fmt.Sprintf("/entities/%s/keywords/%s/synonyms", url.PathEscape(entityID), url.PathEscape(keyword)), "application/json", bytes.NewBuffer(exprJSON))
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Close()
+
+	var entityResp *Entity
+	decoder := json.NewDecoder(resp)
+	if err = decoder.Decode(&entityResp); err != nil {
+		return nil, err
+	}
+
+	return entityResp, nil
+}
+
+// DeleteEntityKeywordSynonym - Delete a synonym of the keyword of the entity.
+//
+// https://wit.ai/docs/http/20200513/#delete__entities__entity_keywords__keyword_synonyms__synonym_link
+func (c *Client) DeleteEntityKeywordSynonym(entityID string, keyword string, expression string) error {
+	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/entities/%s/keywords/%s/synonyms/%s", url.PathEscape(entityID), url.PathEscape(keyword), url.PathEscape(expression)), "application/json", nil)
 	if err == nil {
 		resp.Close()
 	}

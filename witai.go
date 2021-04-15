@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	// DefaultVersion - https://wit.ai/docs/http/20170307
-	DefaultVersion = "20170307"
+	// DefaultVersion - https://wit.ai/docs/http/20200513/
+	DefaultVersion = "20200513"
 	// WitTimeFormat - the custom format of the timestamp sent by the api
 	WitTimeFormat = "2006-01-02T15:04:05Z0700"
 )
@@ -34,11 +34,10 @@ type errorResp struct {
 
 // NewClient - returns Wit.ai client for default API version
 func NewClient(token string) *Client {
-	return NewClientWithVersion(token, DefaultVersion)
+	return newClientWithVersion(token, DefaultVersion)
 }
 
-// NewClientWithVersion - returns Wit.ai client for specified API version
-func NewClientWithVersion(token, version string) *Client {
+func newClientWithVersion(token, version string) *Client {
 	headerAuth := fmt.Sprintf("Bearer %s", token)
 	headerAccept := fmt.Sprintf("application/vnd.wit.%s+json", version)
 

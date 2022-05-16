@@ -1,4 +1,6 @@
+//go:build integration
 // +build integration
+
 // Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 
 package witai

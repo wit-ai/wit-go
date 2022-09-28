@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"reflect"
 	"testing"
 )
@@ -149,18 +148,18 @@ func TestSpeech(t *testing.T) {
 }
 
 func Test_buildParseQuery(t *testing.T) {
-	want := "?q=" + url.PathEscape("hello world") +
+	want := "?q=" + "hello+world%26foo" +
 		"&n=1&tag=tag" +
 		"&context=" +
-		url.PathEscape("{"+
-			"\"reference_time\":\"2014-10-30T12:18:45-07:00\","+
-			"\"timezone\":\"America/Los_Angeles\","+
-			"\"locale\":\"en_US\","+
-			"\"coords\":{\"lat\":32.47104,\"long\":-122.14703}"+
-			"}")
+		"%7B" +
+		"%22reference_time%22%3A%222014-10-30T12%3A18%3A45-07%3A00%22%2C" +
+		"%22timezone%22%3A%22America%2FLos_Angeles%22%2C" +
+		"%22locale%22%3A%22en_US%22%2C" +
+		"%22coords%22%3A%7B%22lat%22%3A32.47104%2C%22long%22%3A-122.14703%7D" +
+		"%7D"
 
 	got := buildParseQuery(&MessageRequest{
-		Query: "hello world",
+		Query: "hello world&foo",
 		N:     1,
 		Tag:   "tag",
 		Context: &MessageContext{

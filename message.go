@@ -121,7 +121,7 @@ func (c *Client) Speech(req *MessageRequest) (*MessageResponse, error) {
 }
 
 func buildParseQuery(req *MessageRequest) string {
-	q := fmt.Sprintf("?q=%s", url.PathEscape(req.Query))
+	q := fmt.Sprintf("?q=%s", url.QueryEscape(req.Query))
 	if req.N != 0 {
 		q += fmt.Sprintf("&n=%d", req.N)
 	}
@@ -131,7 +131,7 @@ func buildParseQuery(req *MessageRequest) string {
 	if req.Context != nil {
 		b, _ := json.Marshal(req.Context)
 		if b != nil {
-			q += fmt.Sprintf("&context=%s", url.PathEscape(string(b)))
+			q += fmt.Sprintf("&context=%s", url.QueryEscape(string(b)))
 		}
 	}
 

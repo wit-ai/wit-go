@@ -54,7 +54,16 @@ export WITAI_INTEGRATION_TOKEN=your_secret_token_here
 go test -v -tags=integration
 ```
 
-
 ## License
 
 The license for wit-go can be found in LICENSE file in the root directory of this source tree.
+
+## Terms of Use
+
+Our terms of use can be found at https://opensource.facebook.com/legal/terms.
+
+
+## Privacy Policy
+
+Our privacy policy can be found at
+https://opensource.facebook.com/legal/privacy.

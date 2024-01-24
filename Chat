@@ -1,0 +1,3 @@
+curl ^
+  -H "Authorization: Bearer 5T6E2GPSPOQY6WIY4QCY24IAE5HWY5QK" ^
+  "https://api.wit.ai/message?v=20240124&q="

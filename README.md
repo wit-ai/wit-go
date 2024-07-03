@@ -1,10 +1,12 @@
 ![wit.ai](https://s3.amazonaws.com/pliutau.com/wit.png)
 
-[![GoDoc](https://godoc.org/github.com/wit-ai/wit-go?status.svg)](https://godoc.org/github.com/wit-ai/wit-go) [![Go Report Card](https://goreportcard.com/badge/github.com/wit-ai/wit-go)](https://goreportcard.com/report/github.com/wit-ai/wit-go)
+[![Go Reference](https://pkg.go.dev/badge/github.com/wit-ai/wit-go)](https://pkg.go.dev/github.com/wit-ai/wit-go)
 
 *This repository is community-maintained. We gladly accept pull requests. Please see the [Wit HTTP Reference](https://wit.ai/docs/http/latest) for all supported endpoints.*
 
 Go client for [wit.ai](https://wit.ai/) HTTP API.
+
+API version: 20240304
 
 ## Install
 
@@ -37,7 +39,7 @@ func main() {
 
 ## Testing
 
-Both Unit / Integration tests are executed by Github Actions.
+Unit tests are executed by Github Actions, but Integration tests have to be executed manually by providing a valid token via `WITAI_INTEGRATION_TOKEN` env var.
 
 ### Unit tests
 
@@ -50,8 +52,7 @@ go test -race -v
 Integration tests are connecting to real Wit.ai API, so you need to provide a valid token:
 
 ```
-export WITAI_INTEGRATION_TOKEN=your_secret_token_here
-go test -v -tags=integration
+WITAI_INTEGRATION_TOKEN={SERVER_ACCESS_TOKEN} go test -v -tags=integration
 ```
 
 ## License

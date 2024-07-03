@@ -44,7 +44,7 @@ func TestCreateEntity(t *testing.T) {
 		w.Write([]byte(`{
 			"id": "5418abc7-cc68-4073-ae9e-3a5c3c81d965",
 			"name": "favorite_city",
-			"roles": ["favorite_city"],
+			"roles": [{"id": "1", "name": "favorite_city"}],
 			"lookups": ["free-text", "keywords"],
 			"keywords": []	
 		}`))
@@ -58,10 +58,10 @@ func TestCreateEntity(t *testing.T) {
 		Roles: []string{},
 	})
 
-	wantEntity := &Entity{
+	wantEntity := &CreateEntityResponse{
 		ID:       "5418abc7-cc68-4073-ae9e-3a5c3c81d965",
 		Name:     "favorite_city",
-		Roles:    []string{"favorite_city"},
+		Roles:    []EntityRole{{ID: "1", Name: "favorite_city"}},
 		Lookups:  []string{"free-text", "keywords"},
 		Keywords: []EntityKeyword{},
 	}
@@ -80,7 +80,7 @@ func TestGetEntity(t *testing.T) {
 			"id": "571979db-f6ac-4820-bc28-a1e0787b98fc",
 			"name": "first_name",
 			"lookups": ["free-text", "keywords"],
-			"roles": ["first_name"],
+			"roles": [{"id": "1", "name": "first_name"}],
 			"keywords": [ {
 				"keyword": "Willy",
 				"synonyms": ["Willy"]
@@ -99,10 +99,10 @@ func TestGetEntity(t *testing.T) {
 	c.APIBase = testServer.URL
 	entity, err := c.GetEntity("first_name")
 
-	wantEntity := &Entity{
+	wantEntity := &CreateEntityResponse{
 		ID:      "571979db-f6ac-4820-bc28-a1e0787b98fc",
 		Name:    "first_name",
-		Roles:   []string{"first_name"},
+		Roles:   []EntityRole{{ID: "1", Name: "first_name"}},
 		Lookups: []string{"free-text", "keywords"},
 		Keywords: []EntityKeyword{
 			{Keyword: "Willy", Synonyms: []string{"Willy"}},
@@ -124,7 +124,7 @@ func TestUpdateEntity(t *testing.T) {
 		res.Write([]byte(`{
 			"id": "5418abc7-cc68-4073-ae9e-3a5c3c81d965",
 			"name": "favorite_city",
-			"roles": ["favorite_city"],
+			"roles": [{"id": "1", "name": "favorite_city"}],
 			"lookups": ["free-text", "keywords"],
 			"keywords": [
 				{
@@ -143,7 +143,7 @@ func TestUpdateEntity(t *testing.T) {
 	c := NewClient(unitTestToken)
 	c.APIBase = testServer.URL
 
-	if err := c.UpdateEntity("favorite_city", Entity{
+	if _, err := c.UpdateEntity("favorite_city", Entity{
 		Name:    "favorite_city",
 		Roles:   []string{"favorite_city"},
 		Lookups: []string{"free-text", "keywords"},

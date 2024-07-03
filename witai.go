@@ -11,10 +11,8 @@ import (
 )
 
 const (
-	// DefaultVersion - https://wit.ai/docs/http/20200513/
-	DefaultVersion = "20200513"
-	// WitTimeFormat - the custom format of the timestamp sent by the api
-	WitTimeFormat = "2006-01-02T15:04:05Z0700"
+	DefaultVersion = "20240304"
+	WitTimeFormat  = "2006-01-02T15:04:05Z0700"
 )
 
 // Client - Wit.ai client type
@@ -32,9 +30,14 @@ type errorResp struct {
 	Error string `json:"error"`
 }
 
-// NewClient - returns Wit.ai client for default API version
+// NewClient returns client for default API version
 func NewClient(token string) *Client {
 	return newClientWithVersion(token, DefaultVersion)
+}
+
+// SetHTTPClient allows to use your custom http.Client
+func (c *Client) SetHTTPClient(httpClient *http.Client) {
+	c.httpClient = httpClient
 }
 
 func newClientWithVersion(token, version string) *Client {
@@ -53,11 +56,6 @@ func newClientWithVersion(token, version string) *Client {
 		headerAccept: headerAccept,
 		httpClient:   defaultClient,
 	}
-}
-
-// SetHTTPClient allows to use your custom http.Client
-func (c *Client) SetHTTPClient(httpClient *http.Client) {
-	c.httpClient = httpClient
 }
 
 func (c *Client) request(method, url string, ct string, body io.Reader) (io.ReadCloser, error) {

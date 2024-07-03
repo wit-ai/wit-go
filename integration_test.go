@@ -15,25 +15,23 @@ import (
 
 var (
 	integrationEntity = Entity{
-		ID:  "integration_entity_id",
-		Doc: "integration_entity_doc",
+		Name:  "integration_entity_name",
+		Roles: []string{"favorite_city"},
 	}
 	integrationApp = App{
-		Name:        "integration_app_id",
-		Private:     false,
-		Description: "integration_app_desc",
-		Lang:        "en",
+		Name:    "integration_app_id",
+		Private: false,
 	}
 	integrationEntityUpdateFields = Entity{
-		ID:      "integration_entity_id",
+		Name:    "integration_entity_name",
+		Roles:   []string{"favorite_city"},
 		Lookups: []string{"keywords"},
-		Doc:     "integration_entity_doc_updated",
 	}
 )
 
 func TestIntegrationInvalidToken(t *testing.T) {
 	c := NewClient("invalid_token")
-	_, err := c.GetEntity(integrationEntity.ID)
+	_, err := c.GetEntity(integrationEntity.Name)
 	if err == nil {
 		t.Fatalf("expected error, got: nil")
 	}
@@ -67,7 +65,10 @@ func TestIntegrationCreateEntity(t *testing.T) {
 	c := getIntegrationClient()
 
 	// just to make sure we don't create duplicates
-	c.DeleteEntity(integrationEntity.ID)
+	c.DeleteEntity(integrationEntity.Name)
+
+	// delete may take some time
+	time.Sleep(2 * time.Second)
 
 	// create entity
 	entity, err := c.CreateEntity(integrationEntity)
@@ -77,8 +78,8 @@ func TestIntegrationCreateEntity(t *testing.T) {
 	if entity == nil {
 		t.Fatalf("expected non nil entity")
 	}
-	if entity.Lang != "en" {
-		t.Fatalf("expected lang=en, got: %s", entity.Lang)
+	if entity.Name != integrationEntity.Name {
+		t.Fatalf("expected entity name %s, got %s", integrationEntity.Name, entity.Name)
 	}
 
 	// create may take some time
@@ -89,65 +90,29 @@ func TestIntegrationUpdateEntity(t *testing.T) {
 	c := getIntegrationClient()
 
 	// update entity
-	err := c.UpdateEntity(integrationEntity.ID, integrationEntityUpdateFields)
+	entity, err := c.UpdateEntity(integrationEntity.Name, integrationEntityUpdateFields)
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
+	}
+	if entity == nil {
+		t.Fatalf("expected non nil entity")
+	}
+	if entity.Name != integrationEntity.Name {
+		t.Fatalf("expected entity name %s, got %s", integrationEntity.Name, entity.Name)
 	}
 
 	time.Sleep(time.Second)
 }
 
-func TestIntegrationAddEntityValue(t *testing.T) {
-	c := getIntegrationClient()
-
-	var err error
-
-	// add entity value 1
-	if _, err = c.AddEntityValue(integrationEntity.ID, EntityValue{
-		Value:       "London",
-		Expressions: []string{"London"},
-	}); err != nil {
-		t.Fatalf("expected nil error, got %v", err)
-	}
-	// add entity value 2
-	if _, err = c.AddEntityValue(integrationEntity.ID, EntityValue{
-		Value:       "Ho Chi Minh City",
-		Expressions: []string{"Ho Chi Minh City"},
-	}); err != nil {
-		t.Fatalf("expected nil error, got %v", err)
-	}
-	// add entity value expression
-	if _, err = c.AddEntityValueExpression(integrationEntity.ID, "Ho Chi Minh City", "HoChiMinh"); err != nil {
-		t.Fatalf("expected nil error, got %v", err)
-	}
-	if _, err = c.AddEntityValueExpression(integrationEntity.ID, "Ho Chi Minh City", "hochiminhcity"); err != nil {
-		t.Fatalf("expected nil error, got %v", err)
-	}
-	if err = c.DeleteEntityValueExpression(integrationEntity.ID, "Ho Chi Minh City", "HoChiMinh"); err != nil {
-		t.Fatalf("expected nil error, got %v", err)
-	}
-
-	// delete entity value 1
-	if err = c.DeleteEntityValue(integrationEntity.ID, "Ho Chi Minh City"); err != nil {
-		t.Fatalf("expected nil error, got %v", err)
-	}
-}
-
 func TestIntegrationGetEntity(t *testing.T) {
 	c := getIntegrationClient()
 
-	// check entity
-	e, err := c.GetEntity(integrationEntity.ID)
+	e, err := c.GetEntity(integrationEntity.Name)
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
-
-	if len(e.Values) != 1 {
-		t.Fatalf("expected 1 value, got %v", e.Values)
-	}
-
-	if e.Doc != integrationEntityUpdateFields.Doc {
-		t.Fatalf("expected doc=%s, got %s", integrationEntityUpdateFields.Doc, e.Doc)
+	if e.Name != integrationEntity.Name {
+		t.Fatalf("expected entity name %s, got %s", integrationEntity.Name, e.Name)
 	}
 
 	entities, err := c.GetEntities()
@@ -158,64 +123,9 @@ func TestIntegrationGetEntity(t *testing.T) {
 		t.Fatalf("expected >0 entities, got %v", entities)
 	}
 
-	err = c.DeleteEntity(integrationEntity.ID)
+	err = c.DeleteEntity(integrationEntity.Name)
 	if err != nil {
 		t.Fatalf("expected nil error got err=%v", err)
-	}
-}
-
-func TestIntegrationSamples(t *testing.T) {
-	c := getIntegrationClient()
-
-	// cleanup
-	c.DeleteSamples([]Sample{
-		{
-			Text: "I want to fly to SFO",
-		},
-	})
-
-	// Deletion takes time
-	time.Sleep(time.Second * 5)
-
-	// samples test
-	_, validateErr := c.ValidateSamples([]Sample{
-		{
-			Text: "I want to fly to SFO",
-			Entities: []SampleEntity{
-				{
-					Entity: "wit$location",
-					Value:  "SFO",
-					Start:  17,
-					End:    20,
-				},
-			},
-		},
-	})
-
-	if validateErr != nil {
-		t.Fatalf("expected nil error, got %v", validateErr)
-	}
-
-	// Training takes time
-	time.Sleep(time.Second * 20)
-
-	// get samples
-	samples, samplesErr := c.GetSamples(1, 0)
-	if samplesErr != nil {
-		t.Fatalf("expected nil error, got %v", samplesErr)
-	}
-	if len(samples) != 1 {
-		t.Fatalf("expected 1 sample, got %v", samples)
-	}
-
-	// delete samples
-	_, delSamplesErr := c.DeleteSamples([]Sample{
-		{
-			Text: "I want to fly to SFO",
-		},
-	})
-	if delSamplesErr != nil {
-		t.Fatalf("expected nil error, got %v", delSamplesErr)
 	}
 }
 

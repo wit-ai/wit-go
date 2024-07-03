@@ -12,7 +12,7 @@ import (
 
 // Trait - represents a wit-ai trait.
 //
-// https://wit.ai/docs/http/20200513/#post__traits_link
+// https://wit.ai/docs/http/#post__traits_link
 type Trait struct {
 	ID     string       `json:"id"`
 	Name   string       `json:"name"`
@@ -21,7 +21,7 @@ type Trait struct {
 
 // TraitValue - represents the value of a Trait.
 //
-// https://wit.ai/docs/http/20200513/#get__traits__trait_link
+// https://wit.ai/docs/http/#get__traits__trait_link
 type TraitValue struct {
 	ID    string `json:"id"`
 	Value string `json:"value"`
@@ -29,7 +29,7 @@ type TraitValue struct {
 
 // GetTraits - returns a list of traits.
 //
-// https://wit.ai/docs/http/20200513/#get__traits_link
+// https://wit.ai/docs/http/#get__traits_link
 func (c *Client) GetTraits() ([]Trait, error) {
 	resp, err := c.request(http.MethodGet, "/traits", "application/json", nil)
 	if err != nil {
@@ -46,7 +46,7 @@ func (c *Client) GetTraits() ([]Trait, error) {
 
 // CreateTrait - creates a new trait with the given values.
 //
-// https://wit.ai/docs/http/20200513/#post__traits_link
+// https://wit.ai/docs/http/#post__traits_link
 func (c *Client) CreateTrait(name string, values []string) (*Trait, error) {
 	type trait struct {
 		Name   string   `json:"name"`
@@ -73,7 +73,7 @@ func (c *Client) CreateTrait(name string, values []string) (*Trait, error) {
 
 // GetTrait - returns all available information about a trait.
 //
-// https://wit.ai/docs/http/20200513/#get__traits__trait_link
+// https://wit.ai/docs/http/#get__traits__trait_link
 func (c *Client) GetTrait(name string) (*Trait, error) {
 	resp, err := c.request(http.MethodGet, fmt.Sprintf("/traits/%s", url.PathEscape(name)), "application/json", nil)
 	if err != nil {
@@ -89,7 +89,7 @@ func (c *Client) GetTrait(name string) (*Trait, error) {
 
 // DeleteTrait - permanently deletes a trait.
 //
-// https://wit.ai/docs/http/20200513/#delete__traits__trait_link
+// https://wit.ai/docs/http/#delete__traits__trait_link
 func (c *Client) DeleteTrait(name string) error {
 	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/traits/%s", url.PathEscape(name)), "application/json", nil)
 	if err == nil {
@@ -101,7 +101,7 @@ func (c *Client) DeleteTrait(name string) error {
 
 // AddTraitValue - create a new value for a trait.
 //
-// https://wit.ai/docs/http/20200513/#post__traits__trait_values_link
+// https://wit.ai/docs/http/#post__traits__trait_values_link
 func (c *Client) AddTraitValue(traitName string, value string) (*Trait, error) {
 	type traitValue struct {
 		Value string `json:"value"`
@@ -130,7 +130,7 @@ func (c *Client) AddTraitValue(traitName string, value string) (*Trait, error) {
 
 // DeleteTraitValue - permanently deletes the trait value.
 //
-// https://wit.ai/docs/http/20200513/#delete__traits__trait_values__value_link
+// https://wit.ai/docs/http/#delete__traits__trait_values__value_link
 func (c *Client) DeleteTraitValue(traitName string, value string) error {
 	resp, err := c.request(http.MethodDelete, fmt.Sprintf("/traits/%s/values/%s", url.PathEscape(traitName), url.PathEscape(value)), "application/json", nil)
 	if err == nil {

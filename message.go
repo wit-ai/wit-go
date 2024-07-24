@@ -11,7 +11,7 @@ import (
 	"net/url"
 )
 
-// MessageResponse - https://wit.ai/docs/http/20200513/#get__message_link
+// MessageResponse - https://wit.ai/docs/http/#get__message_link
 type MessageResponse struct {
 	ID       string                     `json:"msg_id"`
 	Text     string                     `json:"text"`
@@ -20,7 +20,7 @@ type MessageResponse struct {
 	Traits   map[string][]MessageTrait  `json:"traits"`
 }
 
-// MessageEntity - https://wit.ai/docs/http/20200513/#get__message_link
+// MessageEntity - https://wit.ai/docs/http/#get__message_link
 type MessageEntity struct {
 	ID         string                 `json:"id"`
 	Name       string                 `json:"name"`
@@ -34,7 +34,7 @@ type MessageEntity struct {
 	Extra      map[string]interface{} `json:"-"`
 }
 
-// MessageTrait - https://wit.ai/docs/http/20200513/#get__message_link
+// MessageTrait - https://wit.ai/docs/http/#get__message_link
 type MessageTrait struct {
 	ID         string                 `json:"id"`
 	Value      string                 `json:"value"`
@@ -42,14 +42,14 @@ type MessageTrait struct {
 	Extra      map[string]interface{} `json:"-"`
 }
 
-// MessageIntent - https://wit.ai/docs/http/20200513/#get__message_link
+// MessageIntent - https://wit.ai/docs/http/#get__message_link
 type MessageIntent struct {
 	ID         string  `json:"id"`
 	Name       string  `json:"name"`
 	Confidence float64 `json:"confidence"`
 }
 
-// MessageRequest - https://wit.ai/docs/http/20200513/#get__message_link
+// MessageRequest - https://wit.ai/docs/http/#get__message_link
 type MessageRequest struct {
 	Query   string          `json:"q"`
 	Tag     string          `json:"tag"`

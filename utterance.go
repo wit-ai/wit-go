@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-// Utterance - https://wit.ai/docs/http/20200513/#get__utterances_link
+// Utterance - https://wit.ai/docs/http/#get__utterances_link
 type Utterance struct {
 	Text     string            `json:"text"`
 	Intent   UtteranceIntent   `json:"intent"`
@@ -17,13 +17,13 @@ type Utterance struct {
 	Traits   []UtteranceTrait  `json:"traits"`
 }
 
-// UtteranceIntent - https://wit.ai/docs/http/20200513/#get__utterances_link
+// UtteranceIntent - https://wit.ai/docs/http/#get__utterances_link
 type UtteranceIntent struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
-// UtteranceEntity - https://wit.ai/docs/http/20200513/#get__utterances_link
+// UtteranceEntity - https://wit.ai/docs/http/#get__utterances_link
 type UtteranceEntity struct {
 	ID       string            `json:"id"`
 	Name     string            `json:"name"`
@@ -34,7 +34,7 @@ type UtteranceEntity struct {
 	Entities []UtteranceEntity `json:"entities"`
 }
 
-// UtteranceTrait - https://wit.ai/docs/http/20200513/#get__utterances_link
+// UtteranceTrait - https://wit.ai/docs/http/#get__utterances_link
 type UtteranceTrait struct {
 	ID    string `json:"id"`
 	Name  string `json:"name"`
@@ -43,7 +43,7 @@ type UtteranceTrait struct {
 
 // GetUtterances - Returns an array of utterances.
 //
-// https://wit.ai/docs/http/20200513/#get__utterances_link
+// https://wit.ai/docs/http/#get__utterances_link
 func (c *Client) GetUtterances(limit int, offset int) ([]Utterance, error) {
 	if limit <= 0 {
 		limit = 0
@@ -67,7 +67,7 @@ func (c *Client) GetUtterances(limit int, offset int) ([]Utterance, error) {
 
 // DeleteUtterances - Delete validated utterances from your app.
 //
-// https://wit.ai/docs/http/20200513/#delete__utterances_link
+// https://wit.ai/docs/http/#delete__utterances_link
 func (c *Client) DeleteUtterances(texts []string) (*TrainingResponse, error) {
 	type text struct {
 		Text string `json:"text"`
@@ -95,7 +95,7 @@ func (c *Client) DeleteUtterances(texts []string) (*TrainingResponse, error) {
 	return r, err
 }
 
-// TrainingResponse - https://wit.ai/docs/http/20200513/#post__utterances_link
+// TrainingResponse - https://wit.ai/docs/http/#post__utterances_link
 type Training struct {
 	Text     string           `json:"text"`
 	Intent   string           `json:"intent,omitempty"`
@@ -103,7 +103,7 @@ type Training struct {
 	Traits   []TrainingTrait  `json:"traits"`
 }
 
-// TrainingResponse - https://wit.ai/docs/http/20200513/#post__utterances_link
+// TrainingResponse - https://wit.ai/docs/http/#post__utterances_link
 type TrainingEntity struct {
 	Entity   string           `json:"entity"`
 	Start    int              `json:"start"`
@@ -112,13 +112,13 @@ type TrainingEntity struct {
 	Entities []TrainingEntity `json:"entities"`
 }
 
-// TrainingResponse - https://wit.ai/docs/http/20200513/#post__utterances_link
+// TrainingResponse - https://wit.ai/docs/http/#post__utterances_link
 type TrainingTrait struct {
 	Trait string `json:"trait"`
 	Value string `json:"value"`
 }
 
-// TrainingResponse - https://wit.ai/docs/http/20200513/#post__utterances_link
+// TrainingResponse - https://wit.ai/docs/http/#post__utterances_link
 type TrainingResponse struct {
 	Sent bool `json:"sent"`
 	N    int  `json:"n"`
@@ -126,7 +126,7 @@ type TrainingResponse struct {
 
 // TrainUtterances - Add utterances (sentence + entities annotations) to train your app programmatically.
 //
-// https://wit.ai/docs/http/20200513/#post__utterances_link
+// https://wit.ai/docs/http/#post__utterances_link
 func (c *Client) TrainUtterances(trainings []Training) (*TrainingResponse, error) {
 	utterancesJSON, err := json.Marshal(trainings)
 	if err != nil {

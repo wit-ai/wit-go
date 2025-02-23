@@ -39,7 +39,7 @@ func main() {
 
 ## Testing
 
-Unit tests are executed by Github Actions, but Integration tests have to be executed manually by providing a valid token via `WITAI_INTEGRATION_TOKEN` env var.
+Unit tests are executed by Github Actions.
 
 ### Unit tests
 
@@ -48,6 +48,8 @@ go test -race -v
 ```
 
 ### Integration tests
+
+Integration tests have to be executed manually by providing a valid token via `WITAI_INTEGRATION_TOKEN` env var.
 
 Integration tests are connecting to real Wit.ai API, so you need to provide a valid token:
 

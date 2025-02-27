@@ -146,3 +146,27 @@ func getIntegrationClient() *Client {
 	})
 	return c
 }
+
+func TestIntegrationDictation(t *testing.T) {
+	c := getIntegrationClient()
+
+	f, err := os.Open("./testdata/test.mp3")
+	if err != nil {
+		t.Fatalf("unable to open test file, err: %v", err)
+	}
+	defer f.Close()
+
+	req := DictationRequest{
+		File:        f,
+		ContentType: "audio/mpeg3",
+	}
+
+	resp, err := c.Dictation(req)
+	if err != nil {
+		t.Fatalf("unexpected err, got %v", err)
+	}
+
+	if resp.Text != "Hi this is a test file" {
+		t.Fatalf("unexpected transcript, got %s", resp.Text)
+	}
+}

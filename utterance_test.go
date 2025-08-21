@@ -5,8 +5,9 @@ package witai
 import (
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetUtterances(t *testing.T) {
@@ -233,9 +234,7 @@ func TestGetUtterances(t *testing.T) {
 		},
 	}
 
-	if !reflect.DeepEqual(utterances, wantUtterances) {
-		t.Fatalf("expected \n\tmsg %+v \n\tgot %+v", wantUtterances, utterances)
-	}
+	require.Equal(t, wantUtterances, utterances)
 }
 
 func TestDeleteUtterances(t *testing.T) {
@@ -253,9 +252,7 @@ func TestDeleteUtterances(t *testing.T) {
 		N:    2,
 	}
 
-	if !reflect.DeepEqual(resp, wantResp) {
-		t.Fatalf("expected \n\tresp %+v \n\tgot %+v", wantResp, resp)
-	}
+	require.Equal(t, wantResp, resp)
 }
 
 func TestTrainUtterances(t *testing.T) {
@@ -275,7 +272,5 @@ func TestTrainUtterances(t *testing.T) {
 		N:    2,
 	}
 
-	if !reflect.DeepEqual(resp, wantResp) {
-		t.Fatalf("expected \n\tresp %+v \n\tgot %+v", wantResp, resp)
-	}
+	require.Equal(t, wantResp, resp)
 }

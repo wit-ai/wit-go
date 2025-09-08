@@ -5,8 +5,9 @@ package witai
 import (
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetTraits(t *testing.T) {
@@ -33,9 +34,7 @@ func TestGetTraits(t *testing.T) {
 		{ID: "254954985556896", Name: "faq"},
 	}
 
-	if !reflect.DeepEqual(traits, wantTraits) {
-		t.Fatalf("expected\n\ttraits: %v\n\tgot: %v", wantTraits, traits)
-	}
+	require.Equal(t, wantTraits, traits)
 }
 
 func TestCreateTrait(t *testing.T) {
@@ -70,12 +69,8 @@ func TestCreateTrait(t *testing.T) {
 		},
 	}
 
-	if err != nil {
-		t.Fatalf("nil error expected, got %v", err)
-	}
-	if !reflect.DeepEqual(wantTrait, trait) {
-		t.Fatalf("expected\n\ttrait: %v\n\tgot: %v", wantTrait, trait)
-	}
+	require.NoError(t, err)
+	require.Equal(t, wantTrait, trait)
 }
 
 func TestGetTrait(t *testing.T) {
@@ -110,12 +105,8 @@ func TestGetTrait(t *testing.T) {
 		},
 	}
 
-	if err != nil {
-		t.Fatalf("nil error expected, got %v", err)
-	}
-	if !reflect.DeepEqual(wantTrait, trait) {
-		t.Fatalf("expected\n\ttrait: %v\n\tgot: %v", wantTrait, trait)
-	}
+	require.NoError(t, err)
+	require.Equal(t, wantTrait, trait)
 }
 
 func TestDeleteTrait(t *testing.T) {
@@ -126,9 +117,8 @@ func TestDeleteTrait(t *testing.T) {
 
 	c := NewClient(unitTestToken)
 	c.APIBase = testServer.URL
-	if err := c.DeleteTrait("politeness"); err != nil {
-		t.Fatalf("expected nil error, got: %v", err)
-	}
+	err := c.DeleteTrait("politeness")
+	require.NoError(t, err)
 }
 
 func TestAddTraitValue(t *testing.T) {
@@ -168,13 +158,8 @@ func TestAddTraitValue(t *testing.T) {
 		},
 	}
 
-	if err != nil {
-		t.Fatalf("nil error expected, got %v", err)
-	}
-
-	if !reflect.DeepEqual(wantTrait, trait) {
-		t.Fatalf("expected\n\ttrait: %v\n\tgot: %v", wantTrait, trait)
-	}
+	require.NoError(t, err)
+	require.Equal(t, wantTrait, trait)
 }
 
 func TestDeleteTraitValue(t *testing.T) {
@@ -185,7 +170,6 @@ func TestDeleteTraitValue(t *testing.T) {
 
 	c := NewClient(unitTestToken)
 	c.APIBase = testServer.URL
-	if err := c.DeleteTraitValue("politeness", "neutral"); err != nil {
-		t.Fatalf("expected nil error, got: %v", err)
-	}
+	err := c.DeleteTraitValue("politeness", "neutral")
+	require.NoError(t, err)
 }
